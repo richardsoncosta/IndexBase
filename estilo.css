@@ -126,7 +126,7 @@ a:link, a:visited {
  
 a:hover, a.selecionado {
     color: #4e4e4e;
-    background: #fff;
+    background: #ccc;
     margin: 2px;
  }
 
