@@ -126,20 +126,20 @@ a:link, a:visited {
  
 a:hover, a.selecionado {
     color: #white;
-    background: #BLUE;
+    background: #0000ff;
     margin: 2px;
  }
 
  #area-principal a {
     color: Black;
-    background: #GREEN;
+    background: #ff7fff;
     margin: 2px;
     padding: 2px;
     }
 
 #area-principal a:hover {
     color: #9ACD32;
-    background: RED;
+    background: #ff0000;
     padding: 2px;
     }
    
