@@ -132,13 +132,13 @@ a:hover, a.selecionado {
 
  #area-principal a {
     color: white;
-    background: #9ACD32;
+    background: #ccc ;
     margin: 2px;
     padding: 2px;
     }
 
 #area-principal a:hover {
-    color: #ccc;
+    color: #9ACD32;
     background: white;
     padding: 2px;
     }
