@@ -138,7 +138,7 @@ a:hover, a.selecionado {
     }
 
 #area-principal a:hover {
-    color: #9ACD32;
+    color: #ccc;
     background: white;
     padding: 2px;
     }
