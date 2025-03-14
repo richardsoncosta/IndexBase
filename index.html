@@ -6,7 +6,32 @@
     <meta charset="utf-8">
 
     <link rel="stylesheet" type="text/css" href="estilo.css">
+    <script>
+        function checkAuth() {
+            const user = localStorage.getItem('user');
+            const timestamp = localStorage.getItem('timestamp');
 
+            if (user && timestamp && (Date.now() - timestamp < 4 * 60 * 60 * 1000)) {
+                return true;
+            }
+
+            const username = prompt("Digite o nome de usuário:");
+            const password = prompt("Digite a senha:");
+
+            if (username === "SUPERVISOR" && password === "ROSIVREPUS") {
+                localStorage.setItem('user', username);
+                localStorage.setItem('timestamp', Date.now());
+                return true;
+            } else {
+                alert("Usuário ou senha incorretos.");
+                return false;
+            }
+        }
+
+        if (!checkAuth()) {
+            window.location.href = "about:blank";
+        }
+    </script>
 </head>
 
 <body>
