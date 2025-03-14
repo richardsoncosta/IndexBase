@@ -132,15 +132,17 @@ a:hover, a.selecionado {
 
  #area-principal a {
     color: Black;
-    background: #ff7fff;
+    background: #9ACD32;
     margin: 2px;
     padding: 2px;
-    }
+    /*Aqui cores de todos os links gerais*/
+ }
 
 #area-principal a:hover {
     color: #9ACD32;
     background: #ff0000;
     padding: 2px;
+    /*Aqui cores de quando o mouse passar por cima de todos os links gerais*/
     }
    
 
