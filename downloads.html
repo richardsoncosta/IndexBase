@@ -6,7 +6,48 @@
     <meta charset="utf-8">
 
     <link rel="stylesheet" type="text/css" href="estilo.css">
+    <script>
+        function checkAuth() {
+            const user = localStorage.getItem('user');
+            const timestamp = localStorage.getItem('timestamp');
 
+            // Verifica se o usuário já está autenticado e se a autenticação ainda é válida (4 horas)
+            if (user && timestamp && (Date.now() - timestamp < 4 * 60 * 60 * 1000)) {
+                return true; // Usuário já autenticado
+            }
+
+            // Loop para solicitar credenciais até que o usuário acerte ou cancele
+            while (true) {
+                const username = prompt("Digite o nome de usuário:");
+                if (username === null) {
+                    // Usuário cancelou o prompt
+                    alert("Autenticação cancelada.");
+                    return false;
+                }
+
+                const password = prompt("Digite a senha:");
+                if (password === null) {
+                    // Usuário cancelou o prompt
+                    alert("Autenticação cancelada.");
+                    return false;
+                }
+
+                // Verifica se as credenciais estão corretas
+                if (username === "SUPERVISOR" && password === "123456") {
+                    localStorage.setItem('user', username); // Armazena o usuário
+                    localStorage.setItem('timestamp', Date.now()); // Armazena o timestamp
+                    return true; // Autenticação bem-sucedida
+                } else {
+                    alert("Usuário ou senha incorretos. Tente novamente.");
+                }
+            }
+        }
+
+        // Verifica a autenticação ao carregar a página
+        if (!checkAuth()) {
+            window.location.href = "about:blank"; // Redireciona para uma página em branco se a autenticação falhar
+        }
+    </script>
 </head>
 
 <body>
