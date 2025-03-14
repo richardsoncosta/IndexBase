@@ -140,7 +140,7 @@ a:hover, a.selecionado {
 
 #area-principal a:hover {
     color: #9ACD32;
-    background: #ff0000;
+    background: #ccc;
     padding: 2px;
     /*Aqui cores de quando o mouse passar por cima de todos os links gerais*/
     }
