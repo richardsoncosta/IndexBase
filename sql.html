@@ -58,6 +58,20 @@
                 button.textContent = "Mostrar mais";
             }
         }
+
+        // Função para buscar conteúdo
+        function buscarConteudo() {
+            const termo = document.getElementById("inputBusca").value.toLowerCase(); // Obtém o termo de busca
+            const elementos = document.querySelectorAll("#area-principal *"); // Seleciona todos os elementos dentro da área principal
+
+            elementos.forEach(elemento => {
+                if (elemento.textContent.toLowerCase().includes(termo)) {
+                    elemento.style.display = ""; // Mostra o elemento se contiver o termo
+                } else {
+                    elemento.style.display = "none"; // Oculta o elemento se não contiver o termo
+                }
+            });
+        }
     </script>
 </head>
 
