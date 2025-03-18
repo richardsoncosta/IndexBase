@@ -594,6 +594,44 @@ and cod_abastecimento >= 279101
 <br>
 <hr>
     </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> SQL - Mudar situação de abastecimento </h4>
+    <span class="descricao-sql"> SQL para alterar a situação do abastecimento diretamente pelo banco para situações diversas </span>
+    <br>
+    <br>
+
+<pre class="codigo"style="display: none;">
+1 - Ex: Mudar situação de 0 para 35
+ 
+ 
+update abastecimento
+set situacao = 35
+where situacao = 0
+ 
+2 - Ex: Mudar situação de 35 para 0 novamente
+ 
+update abastecimento
+set situacao = 0
+where situacao = 35
+
+3 - Legenda de situações de abastecimentos
+    0 - Pendente (Disponivél para baixar)
+    1 - Bloqueado (Em registro de item)
+    2 - Processado ( Venda Concluída)
+    3 - Descartado (Excluído)
+    4 - Quebrado (1 abastecimento dividido em 2 ou mais)
+    5 - Juntado
+    6 - Aferição
+    7 - Em venda
+    8 - Duplicado
+    9 - Negativo
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
        
         </div>
 
