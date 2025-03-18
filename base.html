@@ -115,14 +115,19 @@
 
                 <!-- Início das postagens -->
                 <div class="postagem"> <!-- abertura postagem-->
-    <h4> SQL - Desbloqueio de tabela </h4>
-    <span class="descricao-sql"> SQL para alterar uma Trigger que protege a integridade do banco de dados de alterações indevidas e desbloqueando as tabelas </span>
+    <h4> 1 - Contingencia: Schema XML: The 'http://www.portalfiscal.inf.br/nfe.cAut
+element is invalid - The value " is invalid according to its
+datatype 'String - The Pattern constraint </h4>
+    <span class="descricao-sql"> Erro no XML, existe algum caractere que não é aceito pela sefaz no campo de autorização manual, que o frentista informa para finalizar uma venda em cartão manua </span>
     <br>
     <br>
 
 <pre class="codigo"style="display: none;">
-ALTER TRIGGER TRIG_RDB$TRIGGERS_1 INACTIVE;
-ALTER TRIGGER INS$caixa_abertura_turno INACTIVE;
+Para correção: 
+1 - No banco do PAF>tabela VENDA_FECHAMENTO_CRT>coluna CARTAO_AUTORIZAÇAO> Alterar o valor nesse campo por qualquer numero natural>comitar e (Caso nao seja necessário para o cliente essa funçao, de digitar o numero de autorização para baixar a venda, podemos desativar a função e evitar futuros casos 
+ 
+2 - Para desativar a função caso o cliente não use (Perguntar se usa) > Acessar > "configurações PDV"> aba TEF> desmarcar flag canto inferior esquerdo > solicitação digitação manual para cartão
+    <br>
 </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
 
 <br>
