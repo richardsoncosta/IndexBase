@@ -94,6 +94,7 @@
                 <br>
                 <br>
 
+                <!-- Início das postagens -->
                 <div class="postagem">
                     <h4>SQL - Desbloqueio de tabela</h4>
                     <span class="descricao-sql">SQL para alterar uma Trigger que protege a integridade do banco de dados de alterações indevidas e desbloqueando as tabelas</span>
@@ -109,7 +110,48 @@ ALTER TRIGGER INS$caixa_abertura_turno INACTIVE;
                     <hr>
                 </div>
 
-                <!-- Repita a estrutura acima para as outras postagens -->
+                <div class="postagem">
+                    <h4>SQL - Reabrir caixa fechado no banco</h4>
+                    <span class="descricao-sql">SQL para alterar o caixa_abertura_turno reabrindo um caixa já fechado</span>
+                    <br>
+                    <br>
+                    <pre class="codigo" style="display: none;">
+ALTER TRIGGER TRIG_RDB$TRIGGERS_1 INACTIVE;
+ALTER TRIGGER INS$caixa_abertura_turno INACTIVE; 
+--LINHA DE CODIGO PARA DESBLOQUER ALTERACOES NA TABELA
+
+UPDATE CAIXA_ABERTURA_TURNO
+SET FECHAMENTO_DATA=null,FECHAMENTO_HORA=null
+WHERE COD_CAIXA_ABERTURA_TURNO='2447'
+--LINHA DE CODIGO PARA ALTERAR O CAIXA
+                    </pre>
+                    <button onclick="toggleCode(this)">Mostrar mais</button>
+                    <br>
+                    <br>
+                    <hr>
+                </div>
+
+                <div class="postagem">
+                    <h4>CMD - Restore do Roteador</h4>
+                    <span class="descricao-sql">Comando CMD para restore de banco de dados do roteador corrompido</span>
+                    <br>
+                    <br>
+                    <pre class="codigo" style="display: none;">
+SET ISC_USER=SYSDBA
+SET ISC_PASSWORD=masterkey
+GFIX -C ALL C:\REDESOFT\ROTEADOR\BANCO.FDB
+GFIX -M -I C:\REDESOFT\ROTEADOR\BANCO.FDB
+GBAK -G -B -V C:\REDESOFT\ROTEADOR\BANCO.FDB C:\REDESOFT\ROTEADOR\BKP_BANCO.GBK
+GBAK -G -R -V -P 4096 C:\REDESOFT\ROTEADOR\BKP_BANCO.GBK C:\REDESOFT\ROTEADOR\BANCO_RECUPERADO.FDB
+GFIX -V -F C:\REDESOFT\ROTEADOR\BANCO_RECUPERADO.FDB
+                    </pre>
+                    <button onclick="toggleCode(this)">Mostrar mais</button>
+                    <br>
+                    <br>
+                    <hr>
+                </div>
+
+                <!-- Repetir a estrutura acima para todas as postagens restantes -->
 
             </div>
         </div>
