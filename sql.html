@@ -243,6 +243,63 @@ AND EVENTO ='TRANSMITIR NFCE CONTINGENCIA'
     <hr>
         </div> <!-- fechamento postagem-->
 
+                
+                <div class="postagem"> <!-- abertura postagem-->
+    <h4> SQL - Contagem de vendas no PDV </h4>
+    <span class="descricao-sql"> SQL para contar as vendas de um PDV com base no numero de caixa ... </span>
+    <br>
+    <br>
+
+<pre class="codigo"style="display: none;">
+ 
+SELECT COUNT(*) FROM VENDA
+WHERE COD_CAIXA_ABERTURA_TURNO = 'xxxx'
+
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+
+                <div class="postagem"> <!-- abertura postagem-->
+    <h4> SQL - Contagem de vendas no retaguarda </h4>
+    <span class="descricao-sql"> SQL para realizar uma contagem de vendas no banco de retaguarda</span>
+    <br>
+    <br>
+
+<pre class="codigo"style="display: none;">
+ 
+SELECT COUNT(*) FROM VENDA
+WHERE COD_CAIXA_ABERTURA_TURNO = 'xxxx'
+AND COD_EMPRESA = xx
+AND COD_PAF_BANCO = xx
+
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+               
+                <div class="postagem"> <!-- abertura postagem-->
+    <h4> SQL - funcao da sql </h4>
+    <span class="descricao-sql"> SQL para alterar ... </span>
+    <br>
+    <br>
+
+<pre class="codigo"style="display: none;">
+ 
+CODIGO OCULTO
+
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+                
         <div class="postagem"> <!-- abertura postagem-->
             <h4> SQL - Cancelamento de vendas e vendas em contingencia</h4>
             <span class="descricao-sql"> SQL para cancelamento de venda em contingência ou vendas presas por terem seu cancelamento mal executado por algum erro no sistema, geralmente vendas desse tipo travam a consolidação do PDV impedindo o envio dos caixas</span>
@@ -476,16 +533,60 @@ and data >= '07/30/2023'
     <hr>
         </div> <!-- fechamento postagem-->
 
-    <!-- Início das postagens -->
-                <div class="postagem"> <!-- abertura postagem-->
-    <h4> SQL - funcao da sql </h4>
-    <span class="descricao-sql"> SQL para alterar ... </span>
+                 <div class="postagem"> <!-- abertura postagem-->
+    <h4> SQL - Alterar data e hora de execução da tabela Evento </h4>
+    <span class="descricao-sql"> SQL para alterar a data e hora em que o evento foi executado, muitas vezes essas alterações só são aceitas pelo banco se realizadas por SQL </span>
     <br>
     <br>
 
 <pre class="codigo"style="display: none;">
  
-CODIGO OCULTO
+UPDATE EVENTO SET DATA_EXECUCAO = '02/18/2020',
+HORA_EXECUCAO = '06:43:01'
+WHERE EXECUTADO = 'FALSE'
+AND EVENTO = 'TRANSMITIR NFCE CONTINGENCIA'
+AND NFCE = 'TRUE
+
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> SQL - Verificar ausencia de protocolo em vendas </h4>
+    <span class="descricao-sql"> SQL para verificar vendas sem protocolo no banco, que podem causar caixas presos sem consolidação para retaguarda </span>
+    <br>
+    <br>
+
+<pre class="codigo"style="display: none;">
+ 
+SELECT * FROM VENDA_NFE
+WHERE PROTOCOLO IS NULL
+AND FORMA_EMISSAO = 9
+
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> SQL - Corrigir casa decimal de abastecimento </h4>
+    <span class="descricao-sql"> SQL para corrigir abastecimento onde suas litragem cairam com a casa decimal errada </span>
+    <br>
+    <br>
+
+<pre class="codigo"style="display: none;">
+ 
+update abastecimento
+set valor=valor *10,
+litros = litros *10,
+encerrante_em_litros = encerrante_em_litros *10
+where situacao=0
+and cod_abastecimento >= 279101
 
 </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
 
