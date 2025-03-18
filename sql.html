@@ -191,6 +191,8 @@ GFIX -M -I C:\REDESOFT\B2CLICKPAF\BANCO.FDB
 gbak -g -b -v -n -i BANCO.FDB BKP_BANCO.GBK
 GBAK -G -R -V -P 4096 C:\REDESOFT\B2CLICKPAF\BKP_BANCO.GBK C:\REDESOFT\B2CLICKPAF\BANCO_RECUPERADO.FDB
 GFIX -V -F C:\REDESOFT\B2CLICKPAF\BANCO_RECUPERADO.FDB
+    <br>
+    <br>
 
 <span class="negrito">Segunda tentativa - Crítica</span>
 
@@ -201,6 +203,8 @@ GFIX -M -I C:\REDESOFT\B2CLICKPAF\BANCO.FDB
 GBAK -G -B -V -IG C:\REDESOFT\B2CLICKPAF\BANCO.FDB C:\REDESOFT\B2CLICKPAF\BKP_BANCO.GBK
 GBAK -G -R -V -P 4096 C:\REDESOFT\B2CLICKPAF\BKP_BANCO.GBK C:\REDESOFT\B2CLICKPAF\BANCO_RECUPERADO.FDB
 GFIX -V -F C:\REDESOFT\B2CLICKPAF\BANCO_RECUPERADO.FDB
+    <br>
+    <br>
 </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
 
 <br>
@@ -218,6 +222,8 @@ GFIX -V -F C:\REDESOFT\B2CLICKPAF\BANCO_RECUPERADO.FDB
 SELECT COUNT(*) FROM EVENTO
 WHERE EXECUTADO = 'FALSE'
 AND EVENTO ='TRANSMITIR NFCE CONTINGENCIA'
+    <br>
+    <br>
 </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
 
 <br>
@@ -587,7 +593,8 @@ litros = litros *10,
 encerrante_em_litros = encerrante_em_litros *10
 where situacao=0
 and cod_abastecimento >= 279101
-
+    <br>
+    <br>
 </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
 
 <br>
@@ -599,7 +606,7 @@ and cod_abastecimento >= 279101
     <h4> SQL - Mudar situação de abastecimento </h4>
     <span class="descricao-sql"> SQL para alterar a situação do abastecimento diretamente pelo banco para situações diversas </span>
     <br>
-    <br>
+    <br>   
 
 <pre class="codigo"style="display: none;">
 1 - Ex: Mudar situação de 0 para 35
@@ -626,6 +633,7 @@ where situacao = 35
     7 - Em venda
     8 - Duplicado
     9 - Negativo
+    <br>
 </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
 
 <br>
