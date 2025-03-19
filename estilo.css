@@ -128,7 +128,7 @@ a:link, a:visited {
  }
  
 a:hover, a.selecionado {
-    color: #black;
+    color: #d2fc00;
     background: #ffff;
     margin: 2px;
  }
