@@ -111,11 +111,10 @@ h3 {
 
    .codigo {
     width: 660px;
-    }
-
-    pre.codigo {
     white-space: pre-wrap; /* Preserva espaços em branco e quebras de linha */
-    word-wrap: break-word; /* Permite que palavras longas quebrem e continuem na próxima linha 
+    word-wrap: break-word; /* Permite que palavras longas quebrem e continuem na próxima linha  
+   }
+  
 
 /* ==========================Menu ===========================================*/
 
