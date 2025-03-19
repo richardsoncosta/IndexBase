@@ -109,7 +109,8 @@ h3 {
 
    .codigo {
     width: 660px;
-    }
+    white-space: pre-wrap; /* Preserva espaços em branco e quebras de linha */
+    word-wrap: break-word;}
 
 /* ==========================Menu ===========================================*/
 
