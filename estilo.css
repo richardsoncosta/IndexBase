@@ -117,7 +117,7 @@ h3 {
 /* ==========================Menu ===========================================*/
 
 a { 
-    text-decoration: none;
+    text-decoration: #RED;
     margin: 3px;
 }
 
