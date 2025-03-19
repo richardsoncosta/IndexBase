@@ -117,13 +117,13 @@ h3 {
 /* ==========================Menu ===========================================*/
 
 a { 
-    text-decoration: #RED;
+    text-decoration: none;
     margin: 3px;
 }
 
 
 a:link, a:visited {
- color: #black;
+ color: #0a0a0a;
  padding: 8px 12px;
  }
  
@@ -142,7 +142,7 @@ a:hover, a.selecionado {
  }
 
 #area-principal a:hover {
-    color: #white;
+    color: white;
     background: #647540;
     padding: 2px;
     /*Aqui cores de quando o mouse passar por cima de todos os links gerais*/
