@@ -109,8 +109,10 @@ h3 {
 
    .codigo {
     width: 660px;
-    white-space: pre-wrap; /* Preserva espaços em branco e quebras de linha */
-    word-wrap: break-word;}
+   white-space: pre-wrap; /* Preserva espaços em branco e quebras de linha */
+    word-wrap: break-word; /* Permite que palavras longas quebrem e continuem na próxima linha */
+    overflow-wrap: break-word; /* Garante que o texto quebre em várias linhas */
+    background-color: #f9f9f9; /* Adiciona um fundo claro para destacar o código */}
 
 /* ==========================Menu ===========================================*/
 
