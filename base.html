@@ -244,15 +244,20 @@ corrigira automaticamente a hora e data da automação. A partir desse momento o
 
 
     <div class="postagem"> <!-- abertura postagem-->
-        <h4> SQL - Listagem de vendas em contingência</h4>
-        <span class="descricao-sql"> SQL para listar e visualizar as vendas em contingência no banco do PDV</span>
+        <h4> 6 - Cliente ao tentar efetuar vendas ocorria erro no regime de tributação pois ele tinha trocado de regime recentemente.
+Por algum motivo o PDV não atualizou no banco a informação </h4>
+        <span class="descricao-sql"> Cliente ao tentar efetuar vendas ocorria erro no regime de tributação pois ele tinha trocado de regime recentemente.
+Por algum motivo o PDV não atualizou no banco a informação</span>
         <br>
         <br>
     
     <pre class="codigo"style="display: none;">
-SELECT * FROM EVENTO
-WHERE EXECUTADO <> 'TRUE'
-AND EVENTO ='TRANSMITIR NFCE CONTINGENCIA'
+Para correção: 
+ 
+1 - Verificar no banco do PAF se as informações estão as mesmas do cadastro da empresa no retaguarda
+Banco PAF> Na tabela "empresa_regime_tribut" coluna "regime_tributacao" verificar se o regime tributário é o mesmo no cadastro da empresa no retaguarda, se nao for colocar o regime correto > comitar > reiniciar PDV 
+   <br>
+ <br>
     </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
     
     <br>
@@ -262,16 +267,24 @@ AND EVENTO ='TRANSMITIR NFCE CONTINGENCIA'
 
                 
                 <div class="postagem"> <!-- abertura postagem-->
-    <h4> SQL - Contagem de vendas no PDV </h4>
-    <span class="descricao-sql"> SQL para contar as vendas de um PDV com base no numero de caixa ... </span>
+    <h4> 7 - Erro pinpad 31 </h4>
+    <span class="descricao-sql"> Erro específico de falta de comunicação com o Pinpad</span>
     <br>
     <br>
 
 <pre class="codigo"style="display: none;">
  
-SELECT COUNT(*) FROM VENDA
-WHERE COD_CAIXA_ABERTURA_TURNO = 'xxxx'
-
+Para correção:
+    
+1 - No sistema verificar a porta USB configurada para o pinpad > F5 extras, selecionar "trocar porta pinpad" > recomendamos deixar em "'AUTO_USB" (maiúsculo) reiniciar o sistema
+ 
+2 - Pedimos para remover e reconectar o pinpad fechamos e abrimos o sistema e testamos
+ 
+3 - Se o erro persistir verificar modelo de Pinpad e verificar se os drives estão instalados, se já estão instalado, desinstalados e instalamos de novo, trocamos o pinpad de porta USB e fechamos e abrimos o PDV, testamos novamente
+ 
+4 - Se o erro persistir informar para o cliente que o problema esta no aparelho pinpad, que o mesmo solicite a troca do dispositivo
+<br>
+ <br>
 </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
 
 <br>
@@ -281,18 +294,23 @@ WHERE COD_CAIXA_ABERTURA_TURNO = 'xxxx'
 
 
                 <div class="postagem"> <!-- abertura postagem-->
-    <h4> SQL - Contagem de vendas no retaguarda </h4>
-    <span class="descricao-sql"> SQL para realizar uma contagem de vendas no banco de retaguarda</span>
+    <h4> 8 - Não existe forma de pagamento cadastrada neste banco de dados com estas condições 
+Verifique se a forma de pagamento exclusiva está permitida na configuração do banco 
+Verifique se a OPN restringe uma forma de pagamento especifica que não está configurada no banco. </h4>
+    <span class="descricao-sql"> PDF informa que alguma configuração no cadastro da OPNF restringe a utilização da forma de pagamento</span>
     <br>
     <br>
 
 <pre class="codigo"style="display: none;">
  
-SELECT COUNT(*) FROM VENDA
-WHERE COD_CAIXA_ABERTURA_TURNO = 'xxxx'
-AND COD_EMPRESA = xx
-AND COD_PAF_BANCO = xx
-
+Para correção: 
+    
+1 - Verificar se a forma usada na OPN esta cadastrada no PDV nas "configurações do PDV" aba "formas de pagamento" caso já esteja configurada
+ 
+2 - Acessar o retaguarda do cliente > buscar "cadastro de OPNF" ou no "modulo operacional"> selecionar "Menu PDV" >  opção "B cadastro de OPNF" >
+localizar o cadastro da operação que o cliente deseja fazer no PDV > ao abrir o cadastro da opnf verificar aba de "formas de pagamento permitidas" > nessa aba deve haver a forma que o cliente esta usando, senão tiver deve ser incluída, e obrigatoriamente deve haver ao lado da forma, na coluna "empresa" o número de empresa que aquela forma pode ser usada na OPNF.
+<br>
+    <br>
 </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
 
 <br>
@@ -301,14 +319,26 @@ AND COD_PAF_BANCO = xx
     </div> <!-- fechamento postagem-->
                
                 <div class="postagem"> <!-- abertura postagem-->
-    <h4> SQL - funcao da sql </h4>
-    <span class="descricao-sql"> SQL para alterar ... </span>
+    <h4> 9 - Erro ao abrir o PDV: Unsuccessful execution caused by a system error that precludes successful execution of subsequent statements.database
+C:\REDESOFT\B2CLICKPAF\BASEPAF.FDB shutdown. </h4>
+    <span class="descricao-sql"> v </span>
     <br>
     <br>
 
 <pre class="codigo"style="display: none;">
  
-CODIGO OCULTO
+Para correção:
+    
+Abrir o CMD(Prompt de Comando) e digitar
+ 
+cd C:\Redesoft\b2clickPAF
+SET ISC_USER=SYSDBA
+SET ISC_PASSWORD=masterkey
+gfix -online basepaf.fdb
+ 
+Ao fim do comando podemos abrir o PAF normalmente
+    <br>
+    <br>
 
 </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
 
@@ -318,78 +348,26 @@ CODIGO OCULTO
     </div> <!-- fechamento postagem-->
                 
         <div class="postagem"> <!-- abertura postagem-->
-            <h4> SQL - Cancelamento de vendas e vendas em contingencia</h4>
-            <span class="descricao-sql"> SQL para cancelamento de venda em contingência ou vendas presas por terem seu cancelamento mal executado por algum erro no sistema, geralmente vendas desse tipo travam a consolidação do PDV impedindo o envio dos caixas</span>
+            <h4> 10 - Erro ao tentar realizar vendas pressionando o F7: MENSAGEM DO ROTEADOR:
+abastecimentos.ConsultarAbastecimentosPendentesNosBicosFunção:
+abastecimentos.ConsultarAbastecimentosPendentesNosBicos
+- Dynamic SQL Error
+SQL error code = -901
+Implementation limit exceeded
+Too many values (more than 1500) in member list to match
+against</h4>
+            <span class="descricao-sql"> Roteador com mais de 1500 abastecimentos pendentes não permite que o sistema abra a tela de abastecimentos pressionando o F7 pois essa quantidade excede a capacidade do sistema de exibir os abastecimentos. </span>
             <br>
             <br>
         
         <pre class="codigo"style="display: none;">
-<span class="negrito">1 - Desbloquear tabelas </span>
-
-ALTER TRIGGER TRIG_RDB$TRIGGERS_1 INACTIVE;
-ALTER TRIGGER INS$VENDA INACTIVE;
-ALTER TRIGGER INS$VENDA_ITENS INACTIVE;
-ALTER TRIGGER INS$VENDA_FECHAMENTO INACTIVE;
-ALTER TRIGGER INS$VENDA_NFE INACTIVE;
-ALTER TRIGGER INS$evento INACTIVE;
-ALTER TRIGGER INS$autorizacao_pdv INACTIVE;
-ALTER TRIGGER INS$evento INACTIVE;
-ALTER TRIGGER INS$lmc_bico INACTIVE;
-ALTER TRIGGER INS$venda_fechamento_chq INACTIVE;
-ALTER TRIGGER INS$venda_fechamento_crt INACTIVE;
-ALTER TRIGGER INS$venda_opnf INACTIVE;
-ALTER TRIGGER INS$caixa_abertura_turno INACTIVE;
-    
-<span class="negrito">2 - Primeiro no PAF</span>
-    
-update venda
-set cod_usuario_cancelou = 180229,
-cancelada='SIM',
-cancelada_ecf='NAO',
-valor_total= null,
-numero_nf = null,
-serie = null,
-modelo = null,
-tipo_ambiente = null,
-chave_nfe = null,
-roteador = 'FALSE'
-where cod_venda = 9367;
-    
-update venda_itens
-set qtd_cancelada = quantidade,
-quantidade = 0,
-cancelado_ecf='NAO',
-valor_cancelado_ecf = total_ecf,
-total_ecf = 0,
-cod_abastecimento=null,
-roteador = 'FALSE'
-where cod_venda = 9367;
-    
-update venda_nfe
-set forma_emissao = null,
-xml = null,
-roteador = 'FALSE'
-where cod_venda = 9367
-and cod_caixa_abertura_turno = 1432;
-    
-update venda_fechamento
-set cod_usuario_cancelou = 180229,
-cancelado = 'SIM',
-roteador = 'FALSE'
-where cod_venda = 9367;
-    
-update evento set executado = 'TRUE'
-where executado = 'FALSE'
-and parametros = '9367'
-and cod_venda = 9367
-
-<span class="negrito">3 - Depois no Roteador</span>
-
-
-update ABASTECIMENTO SET
-SITUACAO = 0,
-COD_VENDA = 0
-WHERE COD_VENDA= 16977
+Para correção:
+            
+1 - Pedimos que o cliente não pressione o F7, clique com o mouse nos bicos, se cada bico tiver menos de 1500 abastecimentos, não ocorrerá o erro, o cliente deve baixar esses abastecimentos conforme a necessidade até um número menos de 1500 abastecimentos ao todo, para poder voltar a usar o F7
+ 
+2 - Caso em 1 bico ou mais, possua individualmente mais de 1500 abastecimentos pendentes, esse bico não vai conseguir abrir a tela e exibir abastecimentos para baixar pois essa quantidade estoura a quantidade suportada pelo sistema, por isso vamos precisar mudar a situação de metade desses abastecimentos no banco do roteador para situação 30, diminuindo a quantidade de abastecimentos naquele bico, o cliente vai baixar esses valores para que depois  voltar os abastecimentos que alteramos para situação 30 para a situação 0, assim eles vão aparecer na tela.
+ <br>
+<br>
         </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
         
         <br>
