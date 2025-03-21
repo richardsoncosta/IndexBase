@@ -5,132 +5,75 @@
     <title>Base de conhecimentos</title>
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="estilo.css">
-    <style>
-        .postagem {
-            position: relative;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        #toggleButton {
-            width: 100%;
-            padding: 10px;
-            background-color: #9ACD32;
-            color: white;
-            border: none;
-            cursor: pointer;
-            text-align: center;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        #toggleButton:hover {
-            background-color: #44d642;
-        }
-
-        .postagem.fretedeloja {
-            width: 100%;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            box-sizing: border-box;
-            margin-top: 10px;
-        }
-
-        .codigo {
-            display: none; /* Inicialmente oculto */
-            overflow: hidden;
-            transition: height 0.5s;
-        }
-
-        .codigo.visible {
-            display: block; /* Exibir quando o botão "Mostrar solução" for clicado */
-        }
-
-        .hidden {
-            display: none; /* Classe para ocultar elementos */
-        }
-    </style>
     <script>
         function checkAuth() {
             const user = localStorage.getItem('user');
             const timestamp = localStorage.getItem('timestamp');
 
+            // Verifica se o usuário já está autenticado e se a autenticação ainda é válida (4 horas)
             if (user && timestamp && (Date.now() - timestamp < 4 * 60 * 60 * 1000)) {
-                return true;
+                return true; // Usuário já autenticado
             }
 
+            // Loop para solicitar credenciais até que o usuário acerte ou cancele
             while (true) {
                 const username = prompt("Digite o nome de usuário:");
                 if (username === null) {
+                    // Usuário cancelou o prompt
                     alert("Autenticação cancelada.");
                     return false;
                 }
 
                 const password = prompt("Digite a senha:");
                 if (password === null) {
+                    // Usuário cancelou o prompt
                     alert("Autenticação cancelada.");
                     return false;
                 }
 
+                // Verifica se as credenciais estão corretas
                 if (username === "SUPERVISOR" && password === "123456") {
-                    localStorage.setItem('user', username);
-                    localStorage.setItem('timestamp', Date.now());
-                    return true;
+                    localStorage.setItem('user', username); // Armazena o usuário
+                    localStorage.setItem('timestamp', Date.now()); // Armazena o timestamp
+                    return true; // Autenticação bem-sucedida
                 } else {
                     alert("Usuário ou senha incorretos. Tente novamente.");
                 }
             }
         }
 
+        // Verifica a autenticação ao carregar a página
         if (!checkAuth()) {
-            window.location.href = "about:blank";
+            window.location.href = "about:blank"; // Redireciona para uma página em branco se a autenticação falhar
         }
 
-        // Função para o botão "SUPORTE FRENTE DE LOJA"
+        // Função para mostrar/ocultar o código
         function toggleCode(button) {
-            const contentElement = document.getElementById('fretedeloja-content');
-            const codeElement = document.querySelector('.codigo');
-
-            if (contentElement.classList.contains('hidden')) {
-                contentElement.classList.remove('hidden');
-                button.textContent = "OCULTAR SUPORTE FRENTE DE LOJA";
-            } else {
-                contentElement.classList.add('hidden');
-                button.textContent = "SUPORTE FRENTE DE LOJA";
-                // Garantir que o código também seja ocultado
-                codeElement.style.display = "none";
-                document.getElementById('showSolutionButton').textContent = "Mostrar solução";
-            }
-        }
-
-        // Função para o botão "Mostrar solução"
-        function toggleSolution() {
-            const codeElement = document.querySelector('.codigo');
-            const button = document.getElementById('showSolutionButton');
-
+            const codeElement = button.previousElementSibling;
             if (codeElement.style.display === "none" || codeElement.style.display === "") {
                 codeElement.style.display = "block";
-                button.textContent = "Ocultar solução";
+                button.textContent = "Mostrar menos";
             } else {
                 codeElement.style.display = "none";
-                button.textContent = "Mostrar solução";
+                button.textContent = "Mostrar mais";
             }
         }
 
+        // Função para buscar conteúdo
         function buscarConteudo() {
-            const termo = document.getElementById("inputBusca").value.toLowerCase();
-            const postagens = document.querySelectorAll(".postagem");
+            const termo = document.getElementById("inputBusca").value.toLowerCase(); // Obtém o termo de busca
+            const postagens = document.querySelectorAll(".postagem"); // Seleciona todas as postagens
 
             postagens.forEach(postagem => {
                 const titulo = postagem.querySelector("h4").textContent.toLowerCase();
-                const descricao = postagem.querySelector(".descricao-conhecimento").textContent.toLowerCase();
+                const descricao = postagem.querySelector(".descricao-sql").textContent.toLowerCase();
                 const codigo = postagem.querySelector(".codigo").textContent.toLowerCase();
 
+                // Verifica se o termo de busca está no título, descrição ou código
                 if (titulo.includes(termo) || descricao.includes(termo) || codigo.includes(termo)) {
-                    postagem.style.display = "";
+                    postagem.style.display = ""; // Mostra a postagem se contiver o termo
                 } else {
-                    postagem.style.display = "none";
+                    postagem.style.display = "none"; // Oculta a postagem se não contiver o termo
                 }
             });
         }
@@ -156,7 +99,7 @@
             <div>
                 <h2>Base de conhecimentos</h2>
                 <br>
-                <span class="descricao">Encontre erro mapeados e suas soluçõs rapidas</span>
+                <span class="descricao">Encontre SQLs e comandos</span>
                 <br>
                 <br>
                 <br>
@@ -171,32 +114,552 @@
                 <br>
 
                 <!-- Início das postagens -->
-                <div class="postagem"> <!– inicio postagem -->
-                    <button id="toggleButton" onclick="toggleCode(this)">SUPORTE FRENTE DE LOJA</button>
-                    <div class="postagem fretedeloja" id="fretedeloja">
-                        <div id="fretedeloja-content" class="hidden">
-                            <h4>1 - Contingencia: Schema XML: The 'http://www.portalfiscal.inf.br/nfe.cAut element is invalid - The value " is invalid according to its datatype 'String - The Pattern constraint</h4>
-                            <br>
-                            <span class="descricao-conhecimento">Erro no XML, existe algum caractere que não é aceito pela sefaz no campo de autorização manual, que o frentista informa para finalizar uma venda em cartão manual</span>
-                            <br>
-                            <br>
-                            <button id="showSolutionButton" onclick="toggleSolution()">Mostrar solução</button>
-                            <pre class="codigo">
-                                <br>
-Para correção: 
-                                
-1 - No banco do PAF>tabela VENDA_FECHAMENTO_CRT>coluna CARTAO_AUTORIZAÇAO> Alterar o valor nesse campo por qualquer numero natural>comitar e (Caso nao seja necessário para o cliente essa funçao, de digitar o numero de autorização para baixar a venda, podemos desativar a função e evitar futuros casos 
+                <div class="postagem"> <!-- abertura postagem-->
+    <h4> 1 - Contingencia: Schema XML: The 'http://www.portalfiscal.inf.br/nfe.cAut
+element is invalid - The value " is invalid according to its
+datatype 'String - The Pattern constraint </h4>
+    <span class="descricao-sql"> Erro no XML, existe algum caractere que não é aceito pela sefaz no campo de autorização manual, que o frentista informa para finalizar uma venda em cartão manual </span>
+    <br>
+    <br>
 
+<pre class="codigo"style="display: none;">
+Para correção: 
+    
+1 - No banco do PAF>tabela VENDA_FECHAMENTO_CRT>coluna CARTAO_AUTORIZAÇAO> Alterar o valor nesse campo por qualquer numero natural>comitar e (Caso nao seja necessário para o cliente essa funçao, de digitar o numero de autorização para baixar a venda, podemos desativar a função e evitar futuros casos 
+ 
 2 - Para desativar a função caso o cliente não use (Perguntar se usa) > Acessar > "configurações PDV"> aba TEF> desmarcar flag canto inferior esquerdo > solicitação digitação manual para cartão
-                                <br>
-                            </pre>
-                        </div>
-                    </div>
-                </div>
-                <br> <!– Fim postagem -->
-            </div>
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+        <h4> 2 - Não foi possível conectar ao servidor </h4>
+        <span class="descricao-sql"> Erro do serviço TEF Gsurf ao tentar passar cartão, pode ter ocorrido por diversos motivos, o serviço travado, queda de internet ou energia etc </span>
+        <br>
+        <br>
+    
+    <pre class="codigo"style="display: none;">
+Para correção:
+        
+1 - Reiniciar o serviço > Barra de pesquisa do Windows > pesquisar por Serviços > Abrir o serviços do Windows > procurar o Serviço "Gsurf" > Clicar em reiniciar o serviço. > pedir para o cliente testar ou executar um teste manual
+ 
+Teste Manual: Abrir CMD > executar comando "Telnet 127.0.0.1 4096" > ao executar a tela ficara preta e podemos fechar o cmd > 
+vamos consultar na pasta C:\Gsurfssl > arquivo de LOG.txt > a ultima linha desse LOG deve ser o serviço "Solicitando desconexão" qualquer retorno diferente significa que continua com erro. Precisaremos executar a segunda solução
+ 
+2 - Reinstalar o certificado do TEF > Identificando o código da OTP, dentro da pasta C:\Gsurfssl tem um arquivo chamado gsurfcli.txt que basicamente é o CNPJ do cliente que pode ter ou não um caractere de identificação. Caso não possa acessar o arquivo gsurfcli.txt usaremos o cnpj do cliente
+ 
+2.1 - Acessamos o endereço https://cdp.gsurfnet.com/login/login > faremos logisn com redesoft.se e a senha que muda conforme o tempo > ao logar no canto superior direito clicaremos na aba Clientes > sub-aba Buscar clientes > ao lado do campo "revenda " haverá o campo "CNPJ" colocaremos o cnpj e clicaremos em filtrar
+ 
+2.2 - Localizaremos a OTP correspondente ao PDV que vamos reinstalar, seja por numero de banco ou pelo código coletado no arquivo TXT mencionado em 2.1 > Clicamos na seta ao lado de "Histórico" > em seguida clicamos em Reinstalar, vai aparecer uma tela para confirmar ao confirmar vai nos aparecer um codigo que usaremos para reinstalar o certificado
+ 
+2.3 - Com o código do certificado extraído do portal de parceiro gsurf, vamos baixar no cliente o certificado abrindo link http://gsurf.com.br/lib/win/certificado.zip na maquina do cliente > extraímos e executamos > dentro da interface do executável informaremos mesmos usuários e senha usado para acessar o portal do Gsurf > por ultimo o código OTP que coletamos no site > ao apertar enter aparecera uma mensagem "Certificado instalado com sucesso, precisona qualquer tecla"
+ 
+2.4 - Reiniciar o serviço Gsurf > Barra de pesquisa do Windows > pesquisar por Serviços > Abrir o serviços do Windows > procurar o Serviço "Gsurf" > Clicar em reiniciar o serviço. > pedir para o cliente testar ou executar um teste manual
+   <br>
+    <br>
+    </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+    
+    <br>
+    <br>
+    <hr>
+        </div> <!-- fechamento postagem-->
+                    
+ <div class="postagem"> <!-- abertura postagem-->
+    <h4> 3 - Erro retorno no LOG GSurf: Não é possível localizar IP </h4>
+    <span class="descricao-sql"> Esse erro ocorre quanto testamos a comunicação do serviço do Gsurf após teste de telnet, o retorno do log diz que não foi possível conectar ao servidor, isso porque durante os saltos entre a maquina do cliente e o servidor, o provedor de internet do cliente não encontrou rota até o servidor telnet dessa forma. claro que o gsuf não funciona </span>
+    <br>
+    <br>
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+1 - Verificar firewall e antivírus da maquina, se já estiverem desativados e o problema persistir solução é pedir para o cliente reiniciar o Switch ou roteador de internet para que na reinicialização os caminhos de saltos mudem encontrando uma rota correta.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+</div> <!-- fechamento postagem-->
+
+<div class="postagem"> <!-- abertura postagem-->
+    <h4> 4 - Caixa em contingência sem fechamento no retaguarda ou o caixa foi fechado no PDV mas não subiu o fechamento </h4>
+    <span class="descricao-sql"> Pode ocorrer por muitos motivos, o principal seriam contingências, bloqueio de rede, falta de consolidação </span>
+    <br>
+    <br>
+
+<pre class="codigo"style="display: none;">
+<span class="negrito">Primeira tentativa - Normal</span>
+
+Para correção:
+    
+1 - Verificamos se o PDV esta com contingências, caso esteja solucionamos todas, caso não saiba como corrigir, pesquisar na base de conhecimentos o My Suite como solucionar a contingencia
+ 
+2 - Ao resolver a contingência, tentamos transmitir > no PDV > Clicamos F11 para bloquear todos os turnos > depois Clicando F5 Extras > Selecionar opção "Manutenção de pendencia NFCE" > selecionar todas as notas em contingencia e clicar em transmitir > caso solicite senha de supervisor informar login e senha
+ 
+3 - Consolidar > no PDV Clicando F5 Extras > selecionar opção "Consolidação" clicar em enviar algumas vezes até uma sub-tela que informa quais dados estão sendo transmitidos não aparecer mais
+ 
+    <br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+</div> <!-- fechamento postagem-->
+
+<div class="postagem"> <!-- abertura postagem-->
+    <h4> 5 - Data e hora dos abastecimentos chegando errado no sistema em automação EZ TECH, automação CBC e automação HORUSTECH</h4>
+    <span class="descricao-sql"> O sistema da Redesoft não é responsável por carimbo de data e hora dos abastecimentos, a Redesoft somente ler o que o aparelho concentrador envia.
+ 
+Por isso, quando o cliente nos informa esse problema, a automação esta com horário incorreto enviando errado os abastecimentos com horários errados.</span>
+    <br>
+    <br>
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+1 - Concentrador da marca EZ TECH: Nesse caso acessamos a pasta do concentrador> C:\Ezservice> executamos um BAT que sincroniza o horário do PC com o a automação > O nome do BAT é SetDateTime.bat> vai abrir um arquivo bat. com cadeias de comando cmd e corrigira automaticamente a hora e data da automação. > 
+A partir desse momento os abastecimentos caem corretamente, e os anteriores não podemos alterar.
+ 
+2 - Concentrador da marca CBC: Abrir software da CBC> selecionar aba de configurações> ao lado do campo "TERMINAL DE LEITURA DE CONFIGURAÇÕES" vai ter um menu > selecionamos "configurações"> dentro de "configurações" vai ter um botão " atualizar horário" >  corrigira automaticamente a hora e data da automação. 
+A partir desse momento os abastecimentos caem corretamente, e os anteriores não podemos alterar.
+ 
+3 - Concentrador da marca HORUSTECH: Abrir software HRS Console com certificado (caso não tenha certificado de automação, solicite ajuda ao nível 2 de frente de loja)> acessar aba "terminal"> clicar em "ajuste de calendário"> clicar em "sincronizar"
+corrigira automaticamente a hora e data da automação. A partir desse momento os abastecimentos caem corretamente, e os anteriores não podemos alterar.
+    <br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+
+    <div class="postagem"> <!-- abertura postagem-->
+        <h4> SQL - Listagem de vendas em contingência</h4>
+        <span class="descricao-sql"> SQL para listar e visualizar as vendas em contingência no banco do PDV</span>
+        <br>
+        <br>
+    
+    <pre class="codigo"style="display: none;">
+SELECT * FROM EVENTO
+WHERE EXECUTADO <> 'TRUE'
+AND EVENTO ='TRANSMITIR NFCE CONTINGENCIA'
+    </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+    
+    <br>
+    <br>
+    <hr>
+        </div> <!-- fechamento postagem-->
+
+                
+                <div class="postagem"> <!-- abertura postagem-->
+    <h4> SQL - Contagem de vendas no PDV </h4>
+    <span class="descricao-sql"> SQL para contar as vendas de um PDV com base no numero de caixa ... </span>
+    <br>
+    <br>
+
+<pre class="codigo"style="display: none;">
+ 
+SELECT COUNT(*) FROM VENDA
+WHERE COD_CAIXA_ABERTURA_TURNO = 'xxxx'
+
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+
+                <div class="postagem"> <!-- abertura postagem-->
+    <h4> SQL - Contagem de vendas no retaguarda </h4>
+    <span class="descricao-sql"> SQL para realizar uma contagem de vendas no banco de retaguarda</span>
+    <br>
+    <br>
+
+<pre class="codigo"style="display: none;">
+ 
+SELECT COUNT(*) FROM VENDA
+WHERE COD_CAIXA_ABERTURA_TURNO = 'xxxx'
+AND COD_EMPRESA = xx
+AND COD_PAF_BANCO = xx
+
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+               
+                <div class="postagem"> <!-- abertura postagem-->
+    <h4> SQL - funcao da sql </h4>
+    <span class="descricao-sql"> SQL para alterar ... </span>
+    <br>
+    <br>
+
+<pre class="codigo"style="display: none;">
+ 
+CODIGO OCULTO
+
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+                
+        <div class="postagem"> <!-- abertura postagem-->
+            <h4> SQL - Cancelamento de vendas e vendas em contingencia</h4>
+            <span class="descricao-sql"> SQL para cancelamento de venda em contingência ou vendas presas por terem seu cancelamento mal executado por algum erro no sistema, geralmente vendas desse tipo travam a consolidação do PDV impedindo o envio dos caixas</span>
+            <br>
+            <br>
+        
+        <pre class="codigo"style="display: none;">
+<span class="negrito">1 - Desbloquear tabelas </span>
+
+ALTER TRIGGER TRIG_RDB$TRIGGERS_1 INACTIVE;
+ALTER TRIGGER INS$VENDA INACTIVE;
+ALTER TRIGGER INS$VENDA_ITENS INACTIVE;
+ALTER TRIGGER INS$VENDA_FECHAMENTO INACTIVE;
+ALTER TRIGGER INS$VENDA_NFE INACTIVE;
+ALTER TRIGGER INS$evento INACTIVE;
+ALTER TRIGGER INS$autorizacao_pdv INACTIVE;
+ALTER TRIGGER INS$evento INACTIVE;
+ALTER TRIGGER INS$lmc_bico INACTIVE;
+ALTER TRIGGER INS$venda_fechamento_chq INACTIVE;
+ALTER TRIGGER INS$venda_fechamento_crt INACTIVE;
+ALTER TRIGGER INS$venda_opnf INACTIVE;
+ALTER TRIGGER INS$caixa_abertura_turno INACTIVE;
+    
+<span class="negrito">2 - Primeiro no PAF</span>
+    
+update venda
+set cod_usuario_cancelou = 180229,
+cancelada='SIM',
+cancelada_ecf='NAO',
+valor_total= null,
+numero_nf = null,
+serie = null,
+modelo = null,
+tipo_ambiente = null,
+chave_nfe = null,
+roteador = 'FALSE'
+where cod_venda = 9367;
+    
+update venda_itens
+set qtd_cancelada = quantidade,
+quantidade = 0,
+cancelado_ecf='NAO',
+valor_cancelado_ecf = total_ecf,
+total_ecf = 0,
+cod_abastecimento=null,
+roteador = 'FALSE'
+where cod_venda = 9367;
+    
+update venda_nfe
+set forma_emissao = null,
+xml = null,
+roteador = 'FALSE'
+where cod_venda = 9367
+and cod_caixa_abertura_turno = 1432;
+    
+update venda_fechamento
+set cod_usuario_cancelou = 180229,
+cancelado = 'SIM',
+roteador = 'FALSE'
+where cod_venda = 9367;
+    
+update evento set executado = 'TRUE'
+where executado = 'FALSE'
+and parametros = '9367'
+and cod_venda = 9367
+
+<span class="negrito">3 - Depois no Roteador</span>
+
+
+update ABASTECIMENTO SET
+SITUACAO = 0,
+COD_VENDA = 0
+WHERE COD_VENDA= 16977
+        </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+        
+        <br>
+        <br>
+        <hr>
+            </div> <!-- fechamento postagem-->
+       
+<div class="postagem"> <!-- abertura postagem-->
+    <h4> SQL - Redução e limpeza do roteador </h4>
+    <span class="descricao-sql"> SQL para redução do tamanho do banco do roteador eliminado registros antigos e redundantes que não são mais necessarios e acabam causando lentidão no sistema </span>
+    <br>
+    <br>
+
+<pre class="codigo"style="display: none;">
+Redução e limpeza do roteador
+ 
+<span class="negrito">1º - Parar totalmente aplicação de roteador</span>
+<span class="negrito">2º - fazer copia do banco para caso de algum problema usarmos a copia</span>
+<span class="negrito">3º - Abrir IBO console > selecionar o banco do roteador > abrir tela de execução de comandos sql 
+e colar a SQL  abaixo</span>
+ 
+(orientações da SQL) 
+ 
+- As datas em SQL são descriminadas por mês/dia/ano
+ 
+- Mudar a data da SQL para um intervalo de datas de no minimo 1 semana a contar da data atual. 
+Ex: se hoje é dia 23/11/2023 na SQL vamos colocar 11/16/2023, uma semana antes da data atual 
+e a SQL trata o mês primeiro e depois o dia. 
+ 
+- A SQL abaixo vai excluir todos os registros anteriores a data informada 
+---------------------------------------
+ALTER TRIGGER TRIG_RDB$TRIGGERS_1 INACTIVE;
+ALTER TRIGGER INS$VENDA INACTIVE;
+ALTER TRIGGER INS$VENDA_ITENS INACTIVE;
+ALTER TRIGGER INS$VENDA_FECHAMENTO INACTIVE;
+ALTER TRIGGER INS$VENDA_NFE INACTIVE;
+ALTER TRIGGER INS$evento INACTIVE;
+ALTER TRIGGER INS$autorizacao_pdv INACTIVE;
+ALTER TRIGGER INS$evento INACTIVE;
+ALTER TRIGGER INS$lmc_bico INACTIVE;
+ALTER TRIGGER INS$venda_fechamento_chq INACTIVE;
+ALTER TRIGGER INS$venda_fechamento_crt INACTIVE;
+ALTER TRIGGER INS$venda_opnf INACTIVE;
+ALTER TRIGGER INS$caixa_abertura_turno INACTIVE;
+ 
+delete from BICO_ABERTO
+where data <= '04/05/2019';
+ 
+delete from AUTORIZACAO_PDV
+where data <= '04/05/2019';
+ 
+delete from lmc_bico
+where data <= '04/05/2019';
+ 
+delete from venda_fechamento_chq
+where momento <= '04/05/2019 23:59:59';
+ 
+delete from venda_fechamento_crt
+where momento <= '04/05/2019 23:59:59';
+ 
+delete from venda_itens
+where data <= '04/05/2019';
+ 
+delete from venda
+where data <= '04/05/2019';
+ 
+delete from venda_opnf
+where data<='04/05/2019';
+ 
+delete from caixa_abertura_turno
+where abertura_data <= '04/05/2019';
+ 
+delete from venda_nfe
+where momento <= '04/05/2019 23:59:59';
+ 
+delete from venda_sat
+where momento <= '04/05/2019 23:59:59';
+ 
+delete from evento
+where data_evento <= '03/01/2023';
+---------------------------------------
+<span class="negrito">4º - Após executar o comando no banco> comitar a alteração</span>
+ 
+<span class="negrito">5º - Renomear o banco do roteador para "banco.fdb" > copiar os arquivos "gbak.exe","gfix.exe" 
+e "fbcliente.dll" de dentro da pasta C:\Program Files\Firebird\Firebird_2_5\bin para a pasta roteador</span>
+ 
+<span class="negrito">6º Após os arquivos estarem devidamente alocados na pasta do roteador> devemos abrir o CMD 
+colocar o caminho para o cmd excutar dentro da pasta do roteador</span>
+ 
+<span class="negrito">7º Executar no CMD o comando:</span>
+ 
+SET ISC_USER=SYSDBA
+SET ISC_PASSWORD=masterkey
+GFIX -C ALL C:\REDESOFT\ROTEADOR\BANCO.FDB
+GFIX -M -I C:\REDESOFT\ROTEADOR\BANCO.FDB
+GBAK -G -B -V C:\REDESOFT\ROTEADOR\BANCO.FDB C:\REDESOFT\ROTEADOR\BKP_BANCO.GBK
+GBAK -G -R -V -P 4096 C:\REDESOFT\ROTEADOR\BKP_BANCO.GBK C:\REDESOFT\ROTEADOR\BANCO_RECUPERADO.FDB
+GFIX -V -F C:\REDESOFT\ROTEADOR\BANCO_RECUPERADO.FDB
+ 
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+        <h4> SQL - Troca em massa de tributações </h4>
+        <span class="descricao-sql"> SQL para alterar para alterar e corrigir tributações de produtos em larga escala no banco de dados </span>
+        <br>
+        <br>
+    
+    <pre class="codigo"style="display: none;">
+Para realizar essa operação da forma correta precisamos de informações relacionadas CST, CFOP e CSOSN
+A utilização desse comando é muito particular ao caso, por isso é muito bom analisar antes de tudo.
+    
+<span class="negrito">1 - Iniciamos o comando indicando a tabela no que no caso é venda_itens</span>
+as colunas e os valores que vão ser inseridos na tabela venda_itens
+    
+Exemplo
+update venda_itens
+set (a sintaxe SET da sql serve para indicarmos qual coluna da tabela vamos mudar, inserimos 
+o nome da coluna=o registro que vai ser inserido no lugar do antigo)
+    
+"update venda_itens
+set cod_produto_tributacao=74,cod_cfop=5102,csosn=102 "
+    
+<span class="negrito">2 - Dito isso um modelo de sql que mudaria tributação, cfop, csosn</span>
+    
+"update venda_itens
+set cod_produto_tributacao=74,cod_cfop=5102,csosn=102
+where cod_venda in (001,002,003,004)"
+    
+<span class="negrito">3 - Atenção as condicionais de alteração</span>
+    
+O parametro where (É a sintaxe na sql que diz em quais registros vão ser elegiveis para as mudanças, 
+mas alguns operadores logicos completam a informação)
+    
+where cod_venda = 0001 (usado para indicar um numero especifico de venda)
+    
+where cod_venda in (001,002,003,004,005,006) (Usado para multiplas vendas quando voce sabe os números 
+e quer informar, colocaria os números das vendas separadas por virgula dentro do parentese)
+    
+where between '1' and '200' (usado para um intervalo, no exemplo as vendas de 1 a 200 alteradas)
+    
+<span class="negrito">4 - Podemos combinar condicionais usando o AND</span>
+    
+Exemplo
+"update venda_itens
+set cod_produto_tributacao=74,cod_cfop=5102,csosn=102
+where cod_venda in (001,002,003,004)"
+and empresa = 12
+and data >= '07/30/2023'
+    </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+    
+    <br>
+    <br>
+    <hr>
+        </div> <!-- fechamento postagem-->
+
+                 <div class="postagem"> <!-- abertura postagem-->
+    <h4> SQL - Alterar data e hora de execução da tabela Evento </h4>
+    <span class="descricao-sql"> SQL para alterar a data e hora em que o evento foi executado, muitas vezes essas alterações só são aceitas pelo banco se realizadas por SQL </span>
+    <br>
+    <br>
+
+<pre class="codigo"style="display: none;">
+ 
+UPDATE EVENTO SET DATA_EXECUCAO = '02/18/2020',
+HORA_EXECUCAO = '06:43:01'
+WHERE EXECUTADO = 'FALSE'
+AND EVENTO = 'TRANSMITIR NFCE CONTINGENCIA'
+AND NFCE = 'TRUE
+
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> SQL - Verificar ausencia de protocolo em vendas </h4>
+    <span class="descricao-sql"> SQL para verificar vendas sem protocolo no banco, que podem causar caixas presos sem consolidação para retaguarda </span>
+    <br>
+    <br>
+
+<pre class="codigo"style="display: none;">
+ 
+SELECT * FROM VENDA_NFE
+WHERE PROTOCOLO IS NULL
+AND FORMA_EMISSAO = 9
+
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> SQL - Corrigir casa decimal de abastecimento </h4>
+    <span class="descricao-sql"> SQL para corrigir abastecimento onde suas litragem cairam com a casa decimal errada </span>
+    <br>
+    <br>
+
+<pre class="codigo"style="display: none;">
+ 
+update abastecimento
+set valor=valor *10,
+litros = litros *10,
+encerrante_em_litros = encerrante_em_litros *10
+where situacao=0
+and cod_abastecimento >= 279101
+    <br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> SQL - Mudar situação de abastecimento </h4>
+    <span class="descricao-sql"> SQL para alterar a situação do abastecimento diretamente pelo banco para situações diversas </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+1 - Ex: Mudar situação de 0 para 35
+ 
+ 
+update abastecimento
+set situacao = 35
+where situacao = 0
+ 
+2 - Ex: Mudar situação de 35 para 0 novamente
+ 
+update abastecimento
+set situacao = 0
+where situacao = 35
+
+3 - Legenda de situações de abastecimentos
+    0 - Pendente (Disponivél para baixar)
+    1 - Bloqueado (Em registro de item)
+    2 - Processado ( Venda Concluída)
+    3 - Descartado (Excluído)
+    4 - Quebrado (1 abastecimento dividido em 2 ou mais)
+    5 - Juntado
+    6 - Aferição
+    7 - Em venda
+    8 - Duplicado
+    9 - Negativo
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+       
         </div>
+
+        </div>
+                        
     </div>
+
+
+
 </body>
 
 </html>
