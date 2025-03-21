@@ -194,6 +194,64 @@ Para correção:
                     </div>
                 </div>
                 <br>
+
+                <div class="postagem">
+                    <button id="toggleButton" onclick="toggleCode(this)">SUPORTE FRENTE DE LOJA</button>
+                    <div class="postagem fretedeloja" id="fretedeloja">
+                        <div id="fretedeloja-content" class="hidden">
+                            <h4>2 - Não foi possível conectar ao servidor</h4>
+                            <br>
+                            <span class="descricao-conhecimento">Erro do serviço TEF Gsurf ao tentar passar cartão, pode ter ocorrido por diversos motivos, o serviço travado, queda de internet ou energia etc</span>
+                            <br>
+                            <br>
+                            <button id="showSolutionButton" onclick="toggleSolution()">Mostrar solução</button>
+                            <pre class="codigo">
+                                <br>
+Para correção:
+
+1 - Reiniciar o serviço > Barra de pesquisa do Windows > pesquisar por Serviços > Abrir o serviços do Windows > procurar o Serviço "Gsurf" > Clicar em reiniciar o serviço. > pedir para o cliente testar ou executar um teste manual
+ 
+Teste Manual: Abrir CMD > executar comando "Telnet 127.0.0.1 4096" > ao executar a tela ficara preta e podemos fechar o cmd > 
+vamos consultar na pasta C:\Gsurfssl > arquivo de LOG.txt > a ultima linha desse LOG deve ser o serviço "Solicitando desconexão" qualquer retorno diferente significa que continua com erro. Precisaremos executar a segunda solução
+ 
+2 - Reinstalar o certificado do TEF > Identificando o código da OTP, dentro da pasta C:\Gsurfssl tem um arquivo chamado gsurfcli.txt que basicamente é o CNPJ do cliente que pode ter ou não um caractere de identificação. Caso não possa acessar o arquivo gsurfcli.txt usaremos o cnpj do cliente
+ 
+2.1 - Acessamos o endereço https://cdp.gsurfnet.com/login/login > faremos logisn com redesoft.se e a senha que muda conforme o tempo > ao logar no canto superior direito clicaremos na aba Clientes > sub-aba Buscar clientes > ao lado do campo "revenda " haverá o campo "CNPJ" colocaremos o cnpj e clicaremos em filtrar
+ 
+2.2 - Localizaremos a OTP correspondente ao PDV que vamos reinstalar, seja por numero de banco ou pelo código coletado no arquivo TXT mencionado em 2.1 > Clicamos na seta ao lado de "Histórico" > em seguida clicamos em Reinstalar, vai aparecer uma tela para confirmar ao confirmar vai nos aparecer um codigo que usaremos para reinstalar o certificado
+ 
+2.3 - Com o código do certificado extraído do portal de parceiro gsurf, vamos baixar no cliente o certificado abrindo link http://gsurf.com.br/lib/win/certificado.zip na maquina do cliente > extraímos e executamos > dentro da interface do executável informaremos mesmos usuários e senha usado para acessar o portal do Gsurf > por ultimo o código OTP que coletamos no site > ao apertar enter aparecera uma mensagem "Certificado instalado com sucesso, precisona qualquer tecla"
+ 
+2.4 - Reiniciar o serviço Gsurf > Barra de pesquisa do Windows > pesquisar por Serviços > Abrir o serviços do Windows > procurar o Serviço "Gsurf" > Clicar em reiniciar o serviço. > pedir para o cliente testar ou executar um teste manual
+                                <br>
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+                <br>
+
+<div class="postagem">
+                    <button id="toggleButton" onclick="toggleCode(this)">SUPORTE FRENTE DE LOJA</button>
+                    <div class="postagem fretedeloja" id="fretedeloja">
+                        <div id="fretedeloja-content" class="hidden">
+                            <h4>3 - Erro retorno no LOG GSurf: Não é possível localizar IP</h4>
+                            <br>
+                            <span class="descricao-conhecimento">Esse erro ocorre quanto testamos a comunicação do serviço do Gsurf após teste de telnet, o retorno do log diz que não foi possível conectar ao servidor, isso porque durante os saltos entre a maquina do cliente e o servidor, o provedor de internet do cliente não encontrou rota até o servidor telnet dessa forma. claro que o gsuf não funciona</span>
+                            <br>
+                            <br>
+                            <button id="showSolutionButton" onclick="toggleSolution()">Mostrar solução</button>
+                            <pre class="codigo">
+                                <br>
+Para correção:
+1 - Verificar firewall e antivírus da maquina, se já estiverem desativados e o problema persistir solução é pedir para o cliente reiniciar o Switch ou roteador de internet para que na reinicialização os caminhos de saltos mudem encontrando uma rota correta.
+                                <br>
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+                <br>
+
+            
             </div>
         </div>
     </div>
