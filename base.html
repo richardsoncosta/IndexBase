@@ -376,97 +376,17 @@ Para correção:
             </div> <!-- fechamento postagem-->
        
 <div class="postagem"> <!-- abertura postagem-->
-    <h4> SQL - Redução e limpeza do roteador </h4>
-    <span class="descricao-sql"> SQL para redução do tamanho do banco do roteador eliminado registros antigos e redundantes que não são mais necessarios e acabam causando lentidão no sistema </span>
+    <h4> 11 - Erro ao tentar realizar uma venda clicando no bico ou pressionando o F7: Já existe uma venda aberta </h4>
+    <span class="descricao-sql"> Ao tentar abrir qualquer venda de abastecimento ocorre esse erro, provavelmente um abastecimento que o sistema tenta abrir uma venda de baixa automática, mas esse abastecimento esta sem RFID, e trava totalmente as vendas no PDV. </span>
     <br>
     <br>
 
 <pre class="codigo"style="display: none;">
-Redução e limpeza do roteador
- 
-<span class="negrito">1º - Parar totalmente aplicação de roteador</span>
-<span class="negrito">2º - fazer copia do banco para caso de algum problema usarmos a copia</span>
-<span class="negrito">3º - Abrir IBO console > selecionar o banco do roteador > abrir tela de execução de comandos sql 
-e colar a SQL  abaixo</span>
- 
-(orientações da SQL) 
- 
-- As datas em SQL são descriminadas por mês/dia/ano
- 
-- Mudar a data da SQL para um intervalo de datas de no minimo 1 semana a contar da data atual. 
-Ex: se hoje é dia 23/11/2023 na SQL vamos colocar 11/16/2023, uma semana antes da data atual 
-e a SQL trata o mês primeiro e depois o dia. 
- 
-- A SQL abaixo vai excluir todos os registros anteriores a data informada 
----------------------------------------
-ALTER TRIGGER TRIG_RDB$TRIGGERS_1 INACTIVE;
-ALTER TRIGGER INS$VENDA INACTIVE;
-ALTER TRIGGER INS$VENDA_ITENS INACTIVE;
-ALTER TRIGGER INS$VENDA_FECHAMENTO INACTIVE;
-ALTER TRIGGER INS$VENDA_NFE INACTIVE;
-ALTER TRIGGER INS$evento INACTIVE;
-ALTER TRIGGER INS$autorizacao_pdv INACTIVE;
-ALTER TRIGGER INS$evento INACTIVE;
-ALTER TRIGGER INS$lmc_bico INACTIVE;
-ALTER TRIGGER INS$venda_fechamento_chq INACTIVE;
-ALTER TRIGGER INS$venda_fechamento_crt INACTIVE;
-ALTER TRIGGER INS$venda_opnf INACTIVE;
-ALTER TRIGGER INS$caixa_abertura_turno INACTIVE;
- 
-delete from BICO_ABERTO
-where data <= '04/05/2019';
- 
-delete from AUTORIZACAO_PDV
-where data <= '04/05/2019';
- 
-delete from lmc_bico
-where data <= '04/05/2019';
- 
-delete from venda_fechamento_chq
-where momento <= '04/05/2019 23:59:59';
- 
-delete from venda_fechamento_crt
-where momento <= '04/05/2019 23:59:59';
- 
-delete from venda_itens
-where data <= '04/05/2019';
- 
-delete from venda
-where data <= '04/05/2019';
- 
-delete from venda_opnf
-where data<='04/05/2019';
- 
-delete from caixa_abertura_turno
-where abertura_data <= '04/05/2019';
- 
-delete from venda_nfe
-where momento <= '04/05/2019 23:59:59';
- 
-delete from venda_sat
-where momento <= '04/05/2019 23:59:59';
- 
-delete from evento
-where data_evento <= '03/01/2023';
----------------------------------------
-<span class="negrito">4º - Após executar o comando no banco> comitar a alteração</span>
- 
-<span class="negrito">5º - Renomear o banco do roteador para "banco.fdb" > copiar os arquivos "gbak.exe","gfix.exe" 
-e "fbcliente.dll" de dentro da pasta C:\Program Files\Firebird\Firebird_2_5\bin para a pasta roteador</span>
- 
-<span class="negrito">6º Após os arquivos estarem devidamente alocados na pasta do roteador> devemos abrir o CMD 
-colocar o caminho para o cmd excutar dentro da pasta do roteador</span>
- 
-<span class="negrito">7º Executar no CMD o comando:</span>
- 
-SET ISC_USER=SYSDBA
-SET ISC_PASSWORD=masterkey
-GFIX -C ALL C:\REDESOFT\ROTEADOR\BANCO.FDB
-GFIX -M -I C:\REDESOFT\ROTEADOR\BANCO.FDB
-GBAK -G -B -V C:\REDESOFT\ROTEADOR\BANCO.FDB C:\REDESOFT\ROTEADOR\BKP_BANCO.GBK
-GBAK -G -R -V -P 4096 C:\REDESOFT\ROTEADOR\BKP_BANCO.GBK C:\REDESOFT\ROTEADOR\BANCO_RECUPERADO.FDB
-GFIX -V -F C:\REDESOFT\ROTEADOR\BANCO_RECUPERADO.FDB
- 
+Para correção: 
+    
+Procurar abastecimentos sem RFID no caixa principal e identificar inserir o RFID de algum funcionário nos abastecimentos sem RFID
+ <br>
+    <br>
 </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
 
 <br>
@@ -475,52 +395,19 @@ GFIX -V -F C:\REDESOFT\ROTEADOR\BANCO_RECUPERADO.FDB
     </div> <!-- fechamento postagem-->
 
     <div class="postagem"> <!-- abertura postagem-->
-        <h4> SQL - Troca em massa de tributações </h4>
-        <span class="descricao-sql"> SQL para alterar para alterar e corrigir tributações de produtos em larga escala no banco de dados </span>
+        <h4> 12 - Erro ao tentar realizar uma venda no cartão combustível: Não foi possivel finalizar a venda Mensagem: cod venda: Os valores dos pagamentos São insuficientes para fechar a venda Se desistir a transação de TEF será cancelada!, Deseja tentar novamente? </h4>
+        <span class="descricao-sql"> Erro ocorre porque está sendo aplicado um desconto diferente na venda, o principal causador é o preço do produto a ser vendido com o preço errado no Portal Vitrine de Preços do clientes </span>
         <br>
         <br>
     
     <pre class="codigo"style="display: none;">
-Para realizar essa operação da forma correta precisamos de informações relacionadas CST, CFOP e CSOSN
-A utilização desse comando é muito particular ao caso, por isso é muito bom analisar antes de tudo.
-    
-<span class="negrito">1 - Iniciamos o comando indicando a tabela no que no caso é venda_itens</span>
-as colunas e os valores que vão ser inseridos na tabela venda_itens
-    
-Exemplo
-update venda_itens
-set (a sintaxe SET da sql serve para indicarmos qual coluna da tabela vamos mudar, inserimos 
-o nome da coluna=o registro que vai ser inserido no lugar do antigo)
-    
-"update venda_itens
-set cod_produto_tributacao=74,cod_cfop=5102,csosn=102 "
-    
-<span class="negrito">2 - Dito isso um modelo de sql que mudaria tributação, cfop, csosn</span>
-    
-"update venda_itens
-set cod_produto_tributacao=74,cod_cfop=5102,csosn=102
-where cod_venda in (001,002,003,004)"
-    
-<span class="negrito">3 - Atenção as condicionais de alteração</span>
-    
-O parametro where (É a sintaxe na sql que diz em quais registros vão ser elegiveis para as mudanças, 
-mas alguns operadores logicos completam a informação)
-    
-where cod_venda = 0001 (usado para indicar um numero especifico de venda)
-    
-where cod_venda in (001,002,003,004,005,006) (Usado para multiplas vendas quando voce sabe os números 
-e quer informar, colocaria os números das vendas separadas por virgula dentro do parentese)
-    
-where between '1' and '200' (usado para um intervalo, no exemplo as vendas de 1 a 200 alteradas)
-    
-<span class="negrito">4 - Podemos combinar condicionais usando o AND</span>
-    
-Exemplo
-"update venda_itens
-set cod_produto_tributacao=74,cod_cfop=5102,csosn=102
-where cod_venda in (001,002,003,004)"
-and empresa = 12
-and data >= '07/30/2023'
+Para correção: 
+        
+Nesse caso não há solução aplicada por nós, podemos demonstrar para o cliente que esse desconto só surge depois que o cliente coloca a senha do cartão, que é quando
+vem o retorno com o preço do produto diferente, o cliente vai ter que verificar os preços dos produtos na vitrine maxfrotas, valecard, tiketlog etc... esses preços devem ser os mesmos da bomba e do retaguarda redesoft, após informar os cliente liberamos o PDV.
+    <br>
+    <br>
+
     </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
     
     <br>
@@ -529,60 +416,18 @@ and data >= '07/30/2023'
         </div> <!-- fechamento postagem-->
 
                  <div class="postagem"> <!-- abertura postagem-->
-    <h4> SQL - Alterar data e hora de execução da tabela Evento </h4>
-    <span class="descricao-sql"> SQL para alterar a data e hora em que o evento foi executado, muitas vezes essas alterações só são aceitas pelo banco se realizadas por SQL </span>
+    <h4> 13 - Erro ao tentar acessar PDV Comanda Ideal: Erro de acesso ao banco. Verifique sua conexão. Problema na
+tentativa de conexão com o banco de dados, verifique se o
+endereço está correto e tente novamente </h4>
+    <span class="descricao-sql"> Comanda ideal não consegue conexão com o banco de dados </span>
     <br>
     <br>
 
 <pre class="codigo"style="display: none;">
  
-UPDATE EVENTO SET DATA_EXECUCAO = '02/18/2020',
-HORA_EXECUCAO = '06:43:01'
-WHERE EXECUTADO = 'FALSE'
-AND EVENTO = 'TRANSMITIR NFCE CONTINGENCIA'
-AND NFCE = 'TRUE
-
-</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
-
+Para correção: 
+Verificar as configurações de conexão no arquivo "IP.ini" na pasta "NFE" ou "NFCE" ("192.168.0.200:C:\NFCe\PLBASE.FDB"), pingar no IP do PC servidor, se a conexão estiver OK> verificar regras de Firewall, apesar da conexão OK, as regras de firewall limitam a conexão e o sistema conecta na máquina mas não acessa o arquivo de banco de dados(PLBASE), pois o firewall bloqueia. Caso não tenha as Regras Firebird UDP e Firebird TCP > criar regras de entrada no Firewall, 1 porta UDP e outra TCP ambas com o número 3051.
 <br>
-<br>
-<hr>
-    </div> <!-- fechamento postagem-->
-
-    <div class="postagem"> <!-- abertura postagem-->
-    <h4> SQL - Verificar ausencia de protocolo em vendas </h4>
-    <span class="descricao-sql"> SQL para verificar vendas sem protocolo no banco, que podem causar caixas presos sem consolidação para retaguarda </span>
-    <br>
-    <br>
-
-<pre class="codigo"style="display: none;">
- 
-SELECT * FROM VENDA_NFE
-WHERE PROTOCOLO IS NULL
-AND FORMA_EMISSAO = 9
-
-</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
-
-<br>
-<br>
-<hr>
-    </div> <!-- fechamento postagem-->
-
-    <div class="postagem"> <!-- abertura postagem-->
-    <h4> SQL - Corrigir casa decimal de abastecimento </h4>
-    <span class="descricao-sql"> SQL para corrigir abastecimento onde suas litragem cairam com a casa decimal errada </span>
-    <br>
-    <br>
-
-<pre class="codigo"style="display: none;">
- 
-update abastecimento
-set valor=valor *10,
-litros = litros *10,
-encerrante_em_litros = encerrante_em_litros *10
-where situacao=0
-and cod_abastecimento >= 279101
-    <br>
     <br>
 </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
 
@@ -592,36 +437,94 @@ and cod_abastecimento >= 279101
     </div> <!-- fechamento postagem-->
 
     <div class="postagem"> <!-- abertura postagem-->
-    <h4> SQL - Mudar situação de abastecimento </h4>
-    <span class="descricao-sql"> SQL para alterar a situação do abastecimento diretamente pelo banco para situações diversas </span>
+    <h4> 14 - servi
+exception 1
+NONAME
+Por razoes de seguranca nao e permitido fazer modificacoes neste banco
+At trigger 'INS$VENDA_OPNF' line: 8, col: </h4>
+    <span class="descricao-sql"> Erro ocorreu quando o cliente tentou abrir uma venda opnf, aparentemente, o executavel do PAF ao tentar executar sql no banco, por algum motivo o banco bloqueou as tabelas usadas na operação </span>
+    <br>
+    <br>
+
+<pre class="codigo"style="display: none;">
+ 
+Para correção
+    
+A correçao desse problema se deu com um restore normal pelo CMD
+ 
+1 - Comando restore normal:
+ 
+SET ISC_USER=SYSDBA
+SET ISC_PASSWORD=masterkey
+GFIX -C ALL C:\REDESOFT\B2CLICKPAF\BANCO.FDB
+GFIX -M -I C:\REDESOFT\B2CLICKPAF\BANCO.FDB
+GBAK -G -B -V -IG C:\REDESOFT\B2CLICKPAF\BANCO.FDB C:\REDESOFT\B2CLICKPAF\BKP_BANCO.GBK
+GBAK -G -R -V -P 4096 C:\REDESOFT\B2CLICKPAF\BKP_BANCO.GBK C:\REDESOFT\B2CLICKPAF\BANCO_RECUPERADO.FDB
+GFIX -V -F C:\REDESOFT\B2CLICKPAF\BANCO_RECUPERADO.FDB
+
+ 
+2 - Comando restore critico
+ 
+SET ISC_USER=SYSDBA
+SET ISC_PASSWORD=masterkey
+GFIX -C ALL C:\REDESOFT\ROTEADOR\BANCO.FDB
+GFIX -M -I C:\REDESOFT\ROTEADOR\BANCO.FDB
+GBAK -G -B -V C:\REDESOFT\ROTEADOR\BANCO.FDB C:\REDESOFT\ROTEADOR\BKP_BANCO.GBK
+GBAK -G -R -V -P 4096 C:\REDESOFT\ROTEADOR\BKP_BANCO.GBK C:\REDESOFT\ROTEADOR\BANCO_RECUPERADO.FDB
+GFIX -V -F C:\REDESOFT\ROTEADOR\BANCO_RECUPERADO.FDB
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 15 - Problemas na conexão com o banco
+internal Firebird consistency check (cannot find record back version (291), file: dpm.cpp line: 1189) </h4>
+    <span class="descricao-sql"> Erro ao tentar abrir o PAF, banco esta com alguma tabela corrompido, infelismente não é possivl recuperar o banco nessa situaçao, mas podemos executar ações que em algumas situações torne a recuperação possivel </span>
+    <br>
+    <br>
+
+<pre class="codigo"style="display: none;">
+ 
+Para correção: 
+1 - Executar restore normal pelo CMD, e o arquivo gerado realizar outro restore pelo critico.
+ 
+2 - Caso o restore nao consiga ser executado, podemos tentar o arquivo de banco para nossa maquina, e tentar executar o restore em nossa maquina
+ 
+3 - Se nenhum dos procedimentos funcionar, teremos que gerar um outro banco para subistituir esse.
+    <br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 16 - Ocorreram problemas na recepção da consolidação:
+update or insert into CNC_AFILIACAO_TAXA (MOMENTO COD_CNC AFILIACAO_TAXA,COD_CNC_AFILIACAO,COD_EMPRESA,CO D_CNC ADQUIRENTE,COD_CNC BANDEIRA_PRODUTO,COD_CNC BAN 3 DEIRA, COD_CNC PLANO,COD_FORMA_PAGTO,DATA INICIAL,DATA FIN
+AL) values (CURRENT_TIMESTAMP ,'21','57','21','2','40','1','2','40','01/01/2022', '12/31/2025') --> Erro executando SQL conversion error from string "12/31/2025" SQL: update or insert into CNC AFILIACAO_TAXA (MOMENTO
+COD_CNC AFILIACAO_TAXA,COD_CNC AFILIACAO,COD_EMPRESA,CO
+D_CNC ADQUIRENTE,COD_CNC BANDEIRA_PRODUTO,COD_CNC_BAN
+DEIRA, COD_CNC_PLANO,COD_FORMA PAGTO,DATA INICIAL,DATA_FIN
+AL) values (CURRENT_TIMESTAMP
+,'21','57','21','2', '40','1','2', '40','01/01/2022', '12/31/2025')
+update or insert Into CNC AFILIACAO_TAXA (MOMENTO COD_CNC AFILIACAO_TAXA,COD_CNC AFILIACAO,COD_EMPRESA,CO
+D CNC ADQUIRENTE,COD_CNC BANDEIRA_PRODUTO,COD_CN </h4>
+    <span class="descricao-sql"> A tabela "cnc_afiliacao_taxa" tinha uma coluna "data_final" com o tipo de valor incorreto, a coluna deveria ser do tipo de dado "data" mas estava com o tipo "time" ocasionando erro na consolidaçao dos dados </span>
     <br>
     <br>   
 
 <pre class="codigo"style="display: none;">
-1 - Ex: Mudar situação de 0 para 35
- 
- 
-update abastecimento
-set situacao = 35
-where situacao = 0
- 
-2 - Ex: Mudar situação de 35 para 0 novamente
- 
-update abastecimento
-set situacao = 0
-where situacao = 35
-
-3 - Legenda de situações de abastecimentos
-    0 - Pendente (Disponivél para baixar)
-    1 - Bloqueado (Em registro de item)
-    2 - Processado ( Venda Concluída)
-    3 - Descartado (Excluído)
-    4 - Quebrado (1 abastecimento dividido em 2 ou mais)
-    5 - Juntado
-    6 - Aferição
-    7 - Em venda
-    8 - Duplicado
-    9 - Negativo
+Para correção:
+    
+Abrir IBO> aba de  tabelas> tabela "cnc_afiliacao_taxa" > na tela de propriedades da tabela> clica com o botao direito em "data_final"se ela tiver com o tipo "time", deleta a coluna com defeito> clica com botao direto em qualquer area > selecion "new" para recriar coluna> coloca o mesmo nome e altera do "Type" para "date"
+    <br>
     <br>
 </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
 
