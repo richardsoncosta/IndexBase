@@ -1188,7 +1188,8 @@ MENSAGEM DO ROTEADOR: dadosPDV.AtualizarDadosPDV-update or insert into PRODUTO_F
         (COD_USUARIO,COD_EMPRESA,COD_PRODUTO_FILIAL,
         MOMENTO,COD_PRODUTO,COD_PRODUTO_TRIBUTACAO,TIPO_ITEM,PVENDA,STATUS,
         SOMENTE_COM_CODIGO_DE_BARRAS,
-        VMAXIMO_VENDA,DESC_MAXIMO_VENDEDOR,DESC_MAXIMO_GERENTE,USA_DESCONTO_GRUPO,IPPT,IAT,ULTIMO_PMC
+        VMAXIMO_VENDA,DESC_MAXIMO_VENDEDOR,DESC_MAXIMO_GERENTE,USA_DESCONTO_GRUPO,
+        IPPT,IAT,ULTIMO_PMC
 Dynamic SQL Error
 SQL error code = -303
 arithmetic exception, numeric overflow, or string truncation
@@ -1625,7 +1626,767 @@ Para correção:
 <br>
 <br>
 <hr>
-    </div> <!-- fechamento postagem-->    
+    </div> <!-- fechamento postagem--> 
+
+<div class="postagem"> <!-- abertura postagem-->
+    <h4> 61 - 752 - [Simulacao] Rejeicao: NFC-e com valor total superior ao permitido para destinatario nao identificado (Endereco) </h4> 
+    <span class="descricao-sql"> Erro embora pareça bem descritivo, precisamos nos atentar aos detalhes informados no erro, a venda nesse caso estava sendo identificada com um cliente, mas o erro aparentemente diz que não tem identificação de cliente... no fim do erro ele informa apenas "endereço" e o problema esta justamente ai, o endereço do cliente informado na venda provavelmente possui alguma inconsistência ou caractere invalido.
+Na ocasião desse erro, a sefaz rejeitou nota por cadastro do agente, no endereço o nome da rua estava incorreto, mais precisamente o nome da rua so tinha uma letra, que não atende aos parâmetros mínimos da sefaz.</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+1 - Acessar o retaguarda do cliente > buscar o código do agente informado na venda > Analisar o cadastro do agente, mas precisamente endereço, nome de bairro > nome de rua, cidade CEP > verificar caracteres inválidos > caracteres mínimos (mínimos de 3)
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 62 - Não foi possível obter o estoque do servidor
+Problema Encontrado:MENSAGEM DO ROTEADOR: estoque.AtualizarEstoqueServidor-Função: estoque.AtualizarEstoqueServidor - internal Firebird consistency check (can't continue after bugcheck) </h4>
+    <span class="descricao-sql"> Erro ocorre no momento de atualizar estoque online no PDV, como o erro é bem claro sobre isso, o erro é do rotador.</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+ 
+1 - Executamos restore pelo cmd no banco do roteador para restore do banco
+ 
+SET ISC_USER=SYSDBA
+SET ISC_PASSWORD=masterkey
+GFIX -C ALL C:\REDESOFT\ROTEADOR\BANCO.FDB
+GFIX -M -I C:\REDESOFT\ROTEADOR\BANCO.FDB
+GBAK -G -B -V C:\REDESOFT\ROTEADOR\BANCO.FDB C:\REDESOFT\ROTEADOR\BKP_BANCO.GBK
+GBAK -G -R -V -P 4096 C:\REDESOFT\ROTEADOR\BKP_BANCO.GBK C:\REDESOFT\ROTEADOR\BANCO_RECUPERADO.FDB
+GFIX -V -F C:\REDESOFT\ROTEADOR\BANCO_RECUPERADO.FDB
+ 
+Após o restore o erro terá sido solucionado
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 63 - 528 - Valor do ICMS diferente do produto BC e alíquota Total BC ICMS diferente do somatório dos itens </h4>
+    <span class="descricao-sql"> Contingencia gerada pelo cálculo incorreto da tributação ICMS de algum produto na venda</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção
+
+Após identificar o código da venda > banco PAF> tabela "venda_itens"> filtra pelo número da venda> pegar porcentagem da alíquota de cada item na coluna "aliquota" e multiplicar pela coluna  "icms_base_calculo" e dividir por 100, em seguida verificar se bate com a coluna > "icms_total_imposto" > caso não bata substituir pelo valor correto e comitar (Em casos que a a coluna "alíquota" esteja zerada ou o "icms_base_calculo", a coluna "icms_total_imposto" pode ser zerada para a transmissão da nota passar).
+
+No sistema em caso de NFE, após a correção, pressiona "Fechar" na tela com o erro> o sistema vai perguntar sobre tentar transmitir de novo> pressionar "sim" para transmitir> e vai esta resolvido.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+<div class="postagem"> <!-- abertura postagem-->
+    <h4> 64 - Não foi encontrado a configuração do PAF-ECF  </h4>
+    <span class="descricao-sql">Erro ocorre geralmente depois de uma geração de banc, em banco novo ou recem restaurado, tem relação com alguns registros da configuração da tabela PAF_BANCO </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+No retaguarda do cliente, salvaremos as configurações do PDV, no frente de loja so recebemos consolidação.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 65 - Erro ao baixar abastecimento como dinheiro: Este código de venda já existe na tabela!
+15:36:05.738EXCEPTION MENSAGEM PARA USUARIO: Este código de venda já existe na tabela!</h4>
+    <span class="descricao-sql"> No caso que levou esse erro a catalogação, ocorreu devido a abastecimentos que cairam no banco do roteador sem codigos de LMC_BICO e ao pressionar o F7 o sistema tenta baixar automaticamente o abastecimento e o erro ocorre.
+ 
+Porém existe outra situação que pode ocasionar esse erro, que é a falta do certificado digital no PDV, seja por estar vencido ou por não está inserido no banco do PDV</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+1 - Verificar certificado digital nas configurações do banco de dados
+ 
+2 - Corrigir no banco do roteador o LMC_BICO do abastecimento, inserir o codigo lmc do bico aberto referente ao codigo de automação que se refere aquele abastecimento, depois disso reiniciamos o roteador
+ 
+3 - Outras situações que cuminam nesse erro: 
+Abastecimento sem codigo identifid do funcionario, quando o sistema tentar baixar automaticamente o erro se apresenta
+Abastecimento com situação de pendente em outro banco, geralmente da pra consultar no log do PDV se no momento do erro isso se aplica para o seu caso.
+Certificado digital no PAF, remover e adicionar novamente.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 66 - Problema na validação do XML da venda: '1010' viola a restrição pattern de '[0-9]{1,3}'. Falha da análise do elemento '{http://www.portalfiscal.inf.br/nfe} nTanque' com valor '1010' </h4>
+    <span class="descricao-sql">Erro ocorre na tentativa de abrir qualquer venda no PDV e está ligado ao cadastro de tanque no retaguarda, cadastro dos tanques com nomenclatura inválida </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+    
+Verificar no retaguarda se os tanques estão com a nomenclatura dentro do padrão aceito pela sefaz ("TQ01" padrão) se estiverem, verificar no banco se está igual ao retaguarda
+IBO > Basepaf > Tabela "produto_tanque" > nomenclatura deve esta fora do padrão descrito acima, e esse é o problema, solicitar que o cliente altere no retaguarda para o padrão correto.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+<div class="postagem"> <!-- abertura postagem-->
+    <h4> 67 - Erro - Erro: {"message":"Ops! Ocorreu um erro inesperado ao processar a sua solicitaÃ§Ã£o."} Value 'message' not found </h4>
+    <span class="descricao-sql"> Erro ocorre no momento de tentar realizar o fechamento de uma venda usando carteiras digitais do B2Pay e nos informa que o servidor esta indisponivel </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Nesse caso apenas informamos o erro no chat de indisponibilidade, para que seja verificado e ser necessário reiniciado o servidor de carteiras
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+   <div class="postagem"> <!-- abertura postagem-->
+    <h4> 68 - Erro ao validar o xml de Autorização:
+'4afd89f1-f8f1-427d-bab4-888338' viola a restrição maxLength de '20'.
+Falha da análise do elemento '{http://www.portalfiscal.inf.br/nfe}cAut' com valor '4afd89f1-f8f1-427d-bab4-888338'.  </h4>
+    <span class="descricao-sql">Erro relacionado a violação de quantidade máxima de caracteres no campo número de autorização de cartão de credito. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+    
+Diminuir a quantidade de caracteres no banco para uma a quantidade que a sefaz aceita, acessamos a tabela venda_fechamento_crt, coluna cartao_autorizacao, provavelmente nesse campo existem mais de 20 caracteres que é a quantidade máxima permitida, precisaremos diminuir a quantidade e comitar.
+ 
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 69 - Impressora Daruma sobrando papel  </h4>
+    <span class="descricao-sql"> Problema ocorre quando o cliente faz impressoes na Daruma e sobra papel demais </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+As vezes não fica claro o porquê que o erro ocorre, em muitos casos o driver spooler da própria DR800 funciona sem erros, mas em casos que a sobra acontece desinstalamos o spooler da Dr800 e instalamos o da dr700, corrigindo o problema
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 70 - Caixa fecha ou bloquea sozinho pós finalizar venda  </h4>
+    <span class="descricao-sql"> Trata-se de uma parametrizacão do PDV na aba de diversos</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Configurações de PDV, aba de Diversos, selecionar a opções de fechar caixa após venda, desmarcar essa flag
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 71 - Diferença Positiva de encerrante na tela de fechaento de bico no PDV </h4>
+    <span class="descricao-sql"> Diferença positiva de encerrate ocorre devido a falta de abastecimento no bico, quando um abastecimento não cai na tela a diferença positiva se apresenta no volume do abastecimento que sumiu.</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Na tela de fechamento de Bico>verificar se o bico tem diferença de encerrante>F3 no bico> visualizar as movimentações>verificar quais abastecimentos faltaram>depois inserir manualmente no bico> para inserir manualmente selecionamos o bico que tava com diferença na tela de abastecimentos> pressionamos F5 > selecionamos inserir abastecimento manual > lembrar de fazer o cálculo: o encerrante do abastecimento que será inserido será o resultado do encerrante final do bico menos o volume do abastecimento a ser inserido. 
+
+Ex: Na tela do fechamento de turno pressionamos o F3 e olhamos o encerrante final do último abastecimento, esse encerrante vamos subtrair o volume da diferença que tem no bico, o resultado dessa conta vai ser o encerrante inicial do abastecimento que vamos inserir manualmente.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 72 - Não foi possível consultar a disponibilidade do serviço da SEFAZ para
+o tipo de nota NF-e Tente novamente mais tarde ou utilize outro tipo de venda.  </h4>
+    <span class="descricao-sql">Erro ocorre quando o cliente tenta abrir venda NFE </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Selecionar o F5 no PDV > opção 18 Consulta status do serviço NF-e, > Clicar > testar NF-e, vai retornar status do servidor da Sefaz e o erro > no caso que levou a catalogação retornou um detalhamento informando que o  horário do PC estava errado, a sefaz não permite venda com um horário de no máximo 05 minutos de diferença ao horario de Brasilia
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 73 - Não foi possivel carregar a dll_nfe.dll Classe não registrada  </h4>
+    <span class="descricao-sql">Erro ocorre ao abrir PAF, ao tentar abrir configurações do banco no PDV ou ao tentar adicionar a Dll_nfe </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+1 - Executar o comando de registro de Dlls dentro do CMD como administrador.
+ "C:\redesoft\b2clickPAF>registraDLL.bat"
+ 
+2 - Ou executar como adm o arquivo "registra.dll.bat" que tem na pasta do PAF
+ 
+3 - Caso o arquivo de registra dll não exista na pasta, o comando cmd não vai executar, mas o arquivo pode ser baixado no My Suite na parte Dowloads
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 74 - [MENSAGEM] Transacao ja cancelada  </h4>
+    <span class="descricao-sql">Erro ocorreu quando cliente passou cartão combustivel no sistema, e fez o cancelamento do cartão por telefone, mas precisa cancelar a venda para o abastecimento voltar a tela.
+ 
+Precisamos entender que se o sistema não conseguir cancelar o pagamento, ele não completa a rotina de cancelamento da venda, como no caso em questão a venda ja estava cancelada porque o cliente ligou para o gestor e solicitou o cancelamento, o retorno acima foi apresentado. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Neste caso, se o valor precisar voltar a tela vamos ter que alterar via banco a forma de pagamento da venda, para uma forma que o sistema consiga cancelar.
+ 
+1 - Alterar na tabela "venda" a coluna "cod_forma_pagto" para forma de pagamento dinheiro ("1")
+ 
+2 - Alterar na tabela "venda_fechamento" a coluna "cod_forma_pagto" para a forma de dinheiro ("1") e "tipo_tef" para "0"
+ 
+3 - Depois das alterações é só fazer o cancelamento pelo menu da tela de consulta de vendas
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 75 - Cartão não configura no POS  </h4>
+    <span class="descricao-sql"> Em alguns POS por serem monoadquirentes, são produzidos para funcionar apenas com uma adquirente específica, então quando se tem esse erro em POS podemos primeiramente verificar com o TEF ou até mesmo com o cliente, se houve troca de adquirente.</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para solução: 
+    
+Destrocar a adquirente no configurador de TEF (apenas o TEF tem acesso) ou solicitar um novo POS compatível com a nova adquirente de cliente
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 76 - No momento não é possivel acessar o caixa de vendas Por favor entre em contato com a redesoft.  </h4>
+    <span class="descricao-sql">Erro ocorre no momento de o cliente abrir o novo caixa, geralmente tem a ver com atraso do pagamento as mensalidades do cliente, por isso provavelmente esse cliente está com a licença bloqueada por falta de pagamento.
+É possível que caixas abertos antes do momento em que a licença foi bloqueada ainda consigam vender, mas caso esse caixa seja fechado novos não vão conseguir abrir. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+Precisamos confirmar a informação de que o cliente esta bloqueado por falta de pagamento antes de passar para o cliente a informação, por isso podemos consultar o status do cliente no retaguarda da entidade REDESOFT, Acessando Redesoft, procuraremos o cadastro do agente Posto do cliente em questão, no cadastro do agente clicaremos na aba Financeiro e na aba geral dentro de financeiro, vamos observar o campo STATUS que se refere ao status do cliente caso esteja Bloqueado confirma nossa suspeita, assim podemos informar a cliente que ele precisa entrar em contato com o financeiro
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 77 - Excesso de tentativas de executar o evento 1146399-MARCAR TITULO COMO EM ABERTO, por favor tente novamente mais tarde. 
+Se o problema persistir contate a REDESOFT
+Mensagem: Impossível continuar. Existe diferença entre o valor do fechamento e o valor dos títulos gerados  </h4>
+    <span class="descricao-sql">Esse erro pode ocorrer porque no ato de fazer uma opnf de baixa de títulos, o PDV por algum erro de comunicação não conclui 2 rotinas, fechar o cupom aberto, executar o evento de marcar o titulo
+Quando ocorre erro nesse tipo de OPNF o sistema tenta desfazer a operação marcando o título como em aberto novamente, no entanto, é possível que o título já esteja quitado tanto no roteador quanto no retaguarda. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+
+1 – Na tabela venda procuramos a última venda do PDV, provavelmente essa venda vai está com a coluna “cupom_aberto” TRUE, alteramos para False, assim destravamos o PDV e o cliente consegue abrir o caixa.
+
+2 – Na tabela “evento” filtramos os eventos por executado FALSE, vai ter o evento descrito no erro, e no lugar do FALSE trocamos por TRUE, destravando o erro de evento que fica aparecendo sempre
+
+3 – Por último na tabela “venda_opnf” procuramos a última opnf, e na coluna “descricao” vamos ter os números dos títulos usados na OPNF, com essa informação acessamos o retaguarda do cliente, e em modulo financeiro, opção títulos, opção consulta de títulos, colocamos um filtro de 1 ano atras e no campo “Cod. Título” o código dos títulos da opnf e filtramos, vamos precisar ver se os títulos estão quitados, se a data de quitação bate com a data da OPNF, se sim finalizamos o atendimento.
+
+Caso o titulo não esteja quitado vamos precisar remover de venda_opnf no pdv e no roteador os códigos dos títulos e pedir para o cliente refazer a operação.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+<div class="postagem"> <!-- abertura postagem-->
+    <h4> 78 - Não exite licença ou a mesma foi bloqueada! Entre em contato com o suporte </h4>
+    <span class="descricao-sql">Erro em clientes PLsoft ao tentar acessar o sistema de frente de loja.
+ 
+Erro pode ocorrer por licença bloqueada por falta de pagamento, ou porque um arquivo com a licença do sistema venceu. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+No caso que trouxe a catalogação do erro, em consulta ao financeiro não existia bloqueio de licença por tanto o caso foi resolvido trocando o arquivo
+ 
+PASSO A PASSO INCOMPLETO VERIFICAR COM OMAR QUAL É O ARQUIVO E ONDE ADICIONAR
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 79 - MENSAGEM DO ROTEADOR: abertura_bico.AbrirBico-Erro ao tentar obter o preço para o bico de código '1|4 ': '4 ' is not a valid integer value </h4>
+    <span class="descricao-sql">Erro na tentativa de abertura de bico, está relacionado ao cadastro de bico, no campo código de bico para automação, depois ou antes do código haver um espaço em branco que causa o erro.</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+Acessar cadastro de bico, verificar se o código de automação para o bico tem esse espaço em branco ou qualquer caractere diferente do padrão usado para a automação
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 80 - MENSAGEM DO ROTEADOR: abertura_bico.AbrirBico-Erro ao tentar obter o preço para o bico de código '2|16': 2 O objeto referenciado não existe. </h4>
+    <span class="descricao-sql">Erro pode ter 2 causas conhecidas, número lógico de bico errado e versão de automação incorreta. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+ 
+1 - Verificar no cadastro de bico
+ 
+2 - trocar a versão de automação para uma versão mais recente
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 81 - Não é possível permitir troco em forma de pagamento cartão uf CE  </h4>
+    <span class="descricao-sql"> Erro ocorre no devido ao arredondamento do sistema, a depender do caso, não é possivel baixar 2 titulos de uma vez por que osistema não calcula corretamente o arredondamento dos centavos, tem que baixar individualmente ou alterar via banco</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+ 
+1 - A forma mais rápida para corrigir é pedir para o cliente ao invés de selecionar 02 títulos ou mais para baixar ao mesmo tempo, tentar baixar um de cada vez.
+2 - A outra forma de resolver devemos corrigir vai banco em venda_fechamento o valor correto calculado em venda
+3 - troca a versão para a versão 113
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 82 - Erro ao chamar o serviço Recepção de Evento no ambiente de Produção na uf PE
+
+Erro ao validar o xml de Recepção de Evento:
+O elemento '{http://www.portalfiscal.inf.br/nfe}envEvento' é usado mas não está declarado no DTD ou no esquema.
+O elemento '{http://www.portalfiscal.inf.br/nfe}idLote' é usado mas não está declarado no DTD ou no esquema.
+O elemento '{http://www.portalfiscal.inf.br/nfe}evento' é usado mas não está declarado no DTD ou no esquema.
+O elemento '{http://www.portalfiscal.inf.br/nfe}infEvento' é usado mas não está declarado no DTD ou no esquema.
+O elemento '{http://www.portalfiscal.inf.br/nfe}cOrgao' é usado mas não está declarado no DTD ou no esquema.
+O elemento '{http://www.portalfiscal.inf.br/nfe}tpAmb' é usado mas não está declarado no DTD ou no esquema.
+O elemento '{http://www.portalfiscal.inf.br/nfe}CNPJ' é usado mas não está declarado no DTD ou no esquema.
+O elemento '{http://www.portalfiscal.inf.br/nfe}chNFe' é usado mas não está declarado no DTD ou no esquema.
+O elemento '{http://www.portalfiscal.inf.br/nfe}dhEvento' é usado mas não está declarado no DTD ou no esquema.
+O elemento '{http://www.portalfiscal.inf.br/nfe}tpEvento' é usado mas não está declarado no DTD ou no esquema.
+O elemento '{http://www.portalfiscal.inf.br/nfe}nSeqEvento' é usado mas não está declarado no DTD ou no esquema.
+O elemento '{http://www.portalfiscal.inf.br/nfe}verEvento' é usado mas não está declarado no c ou no esquema.
+O elemento '{http://www.portalfiscal.inf.br/nfe}detEvento' é usado mas não está declarado no DTD ou no esquema.
+O elemento '{http://www.portalfiscal.inf.br/nfe}descEvento' é usado mas não está declarado no DTD ou no esquema.
+O elemento '{http://www.portalfiscal.inf.br/nfe}nProt' é usado mas não está declarado no DTD ou no esquema.
+O elemento '{http://www.portalfiscal.inf.br/nfe}xJust' é usado mas não está declarado no DTD ou no esquema.
+URL: https://nfce.svrs.rs.gov.br/ws/recepcaoevento/recepcaoevento4.asmx</h4>
+    <span class="descricao-sql"> Erro ocorre na tentativa de cancelar uma venda no sistema quando o PDV esta na versão 10.106 MD5 94594797372657BD9AD0EFEB46D225DE ou117 MD5 27DB6F1186D85AB509434DA93B15A6D1 essas versões possuem um BUG e não permite realizar o cancelamento, MD5 da versão com erro </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+
+Trocar versão do sistema para 118 mais atual
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 83 - Problemas na conexão com o banco
+
+Unable to complete network request to host "localhost".
+Failed to establish a connection  </h4>
+    <span class="descricao-sql">Erro ocorre quando o cliente abre o executavel do sistema e clica em acessar, o executavel tenta conexao com o banco mas retorna o erro.
+A maioria das vezes esta relacionado com um al funcionamento do firebird. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+ 
+1 - Desinstalar o firebird e apagar a pasta do firebir no arquivos e programas
+2 - Reinstalar firebird vai esta resolvendo esse erro
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 84 - CST da mercadoria quanto ao ICMS inválida para o produto 10004 na tributação 128.
+informado: 61
+Possiveis valores: 00, 20, 90, 40, 41, 50, 60 </h4>
+    <span class="descricao-sql">Erro ocorre devido a nova regra de tributação monofásica para alguns combustíveis (Diesel, Gasolina, Etanol) Isso afeta o cadastro das tributações de combustível, alterando o CST ICMS de 060 para 061, mas versoes de PAF anteriores a 10.117 com MD5 57A6E238BF831272EFA8C45F0083B046 não suportam vender os produtos com essas alterações, e assim, o erro acima se apresenta. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para solção:
+
+    Trocar o EXE do PAF para a 10.117 ou superior
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 85 - Não foi possível registrar a venda do item de código 140006
+Código do CFOP para venda no pdv parametrizado na tributação 97 números não possui um valor válido (0) </h4>
+    <span class="descricao-sql"> Podemos nos deparar com esse mesmo erro, com algumas diferenças que é o número da tributação e o valor.
+Basicamente esse erro se refere a tributação citada no erro, nesse caso a 97, e diz que o CFOP dessa tributação não possui um valor válido aceito pela sefaz,
+ </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+    
+Deve ser corrigido no cadastro da tributação> aba "impostos" > sub aba "CFOP" > Campo "CFOP SAÍDA no PDV (SAT/NFC-e/NFe venda)" > informar no campo CFOP correto para a tributação (Sempre orientamos verificar com a contabilidade do cliente qual o correto).
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 86 - MENSAGEM PARA USUARIO: Produto 0 não encontrado na empresa 7 </h4>
+    <span class="descricao-sql">Caixa auxiliar enxergando bico aberto manual, mas bico foi alterado no retaguarda para operar com automação. e o cliente nao fez o fechamento do bico para que operem coma  nova configuração </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+
+Fechar bicos e abrir novamente, assim serão abertos com dados da autormação.
+    <br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 87 -  Erro ao tentar imprimir carnê o pdv apresenta a mensagem "I/O error 103" </h4>
+    <span class="descricao-sql">Erro ocorre na tentativa de impressao de carnê, no caso que levou a catalogação do erro, estava relacionada a porta de impressão de carnê configurada no PDV </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+
+Nas configurações do PDV > aba diversos > no canto superior direito teremos os campos para "porta de impressão do carnê" e "Porta NF (Frm.cont)" onde colocamos a porta COM ou USB que esta configurada a impressora 
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+<div class="postagem"> <!-- abertura postagem-->
+    <h4> 88 - Erro na execução da SQL: 
+select vf.*, crt.PIN_CARTEIRA_DIGITAL, crt.cod_carteira_digital, crt.COD_PSP_PIX, 
+from VENDA_FECHAMENTO VF join venda_fechamento_crt crt using (cod_venda, cod_venda_fechamento)
+where VF.COD_EMPRESA = 8
+and VF.COD_VENDA = 416246
+ 
+Mensagem: Dynamic SQL Error
+SQL error code = -104
+Token unknown - line 2, column 1
+from  </h4>
+    <span class="descricao-sql">Erro ao tentar realizar o cancelamento de um venda no PDV, esse erro esta relacionado a uma versão defeiturosa na rotina de cancelamento. MD5 da versão 26DD6EAD5B5B6E8A0B2DCC18DCFE4587, no entanto esse erro pode ocorrer em outras versões e nesses casos pode ser resolver da mesma forma que resolvemos aqui </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: trocar o EXE do PAF para a versão mais recente disponivel, no caso que levou a catalogação a versão que sesolveu foi a 118 1A34E0F34B7C13B89ED53F1D413FAC3D 
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 89 - Configurar PDV para imprimir em impressora compartilhada na rede  </h4>
+    <span class="descricao-sql"> Por padrão a impressora já tem que está compartilhada, não é obrigação do suporte fazer a configuração da rede do cliente para compartilhar a impressora, caso não esteja compartilhada informar ao cliente para contator o técnico de T.I do local para compartilhar as impressoras.</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+    
+Verificado que a impressora já esta compartilhada na rede precisamos acessar as configurações do PAF > F5 Extras > Configurações do PDV > acessar com usuário supervisor e senha da semana > em seguida selecionar a aba > Não fiscal > no campo Nome da impressora preencher com o caminho da impressora dentro da rede + nome da impressora (Ex; \\WIN7-PC\ELGIN i9(novo))
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 90 - '7894900013' is not a valid integer value: [&OK] </h4>
+    <span class="descricao-sql">Erro ocorre devido a inserção de um codigo de barras no campo indevido dentro da comanda. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+    
+Apagar do campo "pessoas p pessoas": e colocar numero " 1 " na tela de lancamento de itens, logo abaixo do teclado virtual que é apresentado na tela
+ 
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 91 - empresa 11 entidade REDETREVO tabela LMC_BICO chave 28052
+J? existe um registro com esta ordem em LMC Bico
+ empresa 11 entidade REDETREVO tabela LMC_BICO chave 28053
+J? existe um registro com esta ordem em LMC Bico
+ empresa 11 entidade REDETREVO tabela LMC_BICO chave 28054
+J? existe um registro com esta ordem em LMC Bico
+ empresa 11 entidade REDETREVO tabela LMC_BICO chave 28055
+J? existe um registro com esta ordem em LMC Bico
+ empresa 11 entidade REDETREVO tabela LMC_BICO chave 28056
+J? existe um registro com esta ordem em LMC Bico
+ empresa 11 entidade REDETREVO tabela LMC_BICO chave 28057
+J? existe um registro com esta ordem em LMC Bico
+ empresa 11 entidade REDETREVO tabela LMC_BICO chave 28058
+J? existe um registro com esta ordem em LMC Bico
+ empresa 11 entidade REDETREVO tabela LMC_BICO chave 28059
+J? existe um registro com esta ordem em LMC Bico </h4>
+    <span class="descricao-sql"> Esse erro ocorre devido a intervenções, na coluna ordem que serve para ordenar as aberturas de bicos não pode ter duplicidade nos turnos, com duplicidade em relacao a quantidade de aberturas do dia, portanto se o cliente abrir os bicos uma vez, a ordem daquele LMC de abertura é 1, se ele fecha e abre de novo os bicos por consequencia essa segunda abertura tem a ordem 2, e quantas vezes ele abrir a ordem deve mudar; assim de alguma forma o sistema abriu o bico e não fez a alteração da ordem, causando o problema.</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+    
+Acessar o banco do roteador e do PAF, localizar os LMCs de números que estão na mensagem de erro, em ambos os bancos e tabelas haverá a coluna "ordem" que devemos mudar para uma ordem de abertura ainda não usada no dia, podemos ver isso na propria tabela.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 92 - Socket Error # 10038 Socket operation on non-socket. </h4>
+    <span class="descricao-sql"> Erro se apresenta na tentativa de abrir um PDV, caixa ou enviar e receber consolidação</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+
+Esse erro na oportunidade de causou sua catalogação, está relacionado a indisponibilidade do provedor de internet do cliente, portanto ficamos a espera da internet do cliente, muitas vezes pedir para reiniciar tudo ou pedir par ao cliente entrar em contato com o provedor para que seja verificado o problema 
+Para testes específicos pode-se usar o link: retaguarda.b2click.com para testar, esse link deve abrir normalmente na tela do navegador do cliente
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 93 - MENSAGEM DO ROTEADOR: abastecimentos.ConsultarAbastecimentosPendentesNosBicos-Função: abastecimentos.ConsultarAbastecimentosPendentesNosBicos - Overflow while converting variant of type (Int64) into type (Integer)  </h4>
+    <span class="descricao-sql"> Erro ocorre devido a estouro de campo e character inválido no código do abastecimento, no caso que levou a catalogação desse erro, na ocasião existia um sinal de ( - ) no cod_abastecimento  tinham abastecimentos que o número tinham 15 casas, estourando o limite do sistema. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+    
+Foram alterados os códigos de abastecimento para números proximo aos existentes antes do salto, num intervalo não usado ainda, e verificado no generaitor de abastecimento se o salto vinha de lá e corrigido
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 16 -  </h4>
+    <span class="descricao-sql"> </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+
+
+
+
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 94 - ERRO no registraFormaDePagamento Erro consultando o status do lote: Retorno Nota: 732 - Rejeicao: CFOP de operação com Exterior e idDest <> 2 [nItem:1].
+Cód. Produto: 1500034 - SHELL HELIX HX3 20W50 1 LT
+29/02/2024 14:04:54.929 USU [MENSAGEM] Não foi possível finalizar a venda
+Mensagem: Erro consultando o status do lote: Retorno Nota: 732 - Rejeicao: CFOP de operação com Exterior e idDest <> 2 [nItem:1].
+Cód. Produto: 1500034 - SHELL HELIX HX3 20W50 1 LT
+Se desistir a transação de TEF será cancelada!, 
+Deseja tentar novamente ?: [&SIM] E &NÃO </h4>
+    <span class="descricao-sql"> Erro ao tentar gerar uma nota grande no frente de loja, esse erro está associado a operação dentro do cadastro do produto ou do tipo de documento.</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+    
+Recomendavel transferencia do caso para o retaguarda para devida configuração das operações do produto
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
     
         </div>
 
