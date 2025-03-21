@@ -531,8 +531,229 @@ Abrir IBO> aba de  tabelas> tabela "cnc_afiliacao_taxa" > na tela de propriedade
 <br>
 <br>
 <hr>
+        
     </div> <!-- fechamento postagem-->
-       
+<div class="postagem"> <!-- abertura postagem-->
+    <h4> 17 - Contingencia PDV: 225 - Rejeicao: Falha no Schema XML da NFe The element 'pag' in namespace 'http://www.portalfiscal.inf.br/nfe' has incomplete content. List of possible elements expected: 'detPag' in namespace 'http://www.portalfiscal.inf.br/nfe'.</h4>
+    <span class="descricao-sql"> Durante a venda, uma falha no sistema em algum momento deixou a transação sem forma de pagamento no banco.</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+ 
+Nesse caso vamos solucionar em paços.
+ 
+1 - Se os itens da venda forem somente item:
+ 
+ - Tirar o fechamento do caixa com SQL 
+ 
+update caixa_abertura_turno
+set fechamento_data=null,fechamento_hora=null
+where cod_caixa_abertura_turno='2447'
+ 
+2 - Remover o evento de contingencia
+ 
+Tabela evento > filtar por executado TRUE > Alterar TRUE por FALSE
+          Ou 
+Update evento
+set executado = 'FALSE'
+where evento = 'TRANSMITIR NFCE CONTINGENCIA'
+ 
+3 - Alterar na venda situação de cupom, para a venda voltar a tela como um cupom aberto
+ 
+Tabela venda > filtar pelo codigo da venda > cupom_aberto > alterar de FALSE para TRUE
+    ou
+update venda
+set cupom_aberto = 'TRUE'
+where cod_venda = 1002
+ 
+4 - Cancelar cupom aberto > fechar o turno > consolidar fechamento.
+    <br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+<div class="postagem"> <!-- abertura postagem-->
+    <h4> 18 - Erro ao tentar fechar o turno no PDV: TRANSAÇÃO NÃO EFETUADA: MENSAGEM DO ROTEADOR: conta-cliente.ConsultaResumoComissaoVendedor-Função: conta-cliente.ConsultaResumoComissaoVendedor - internal Firebird consistency check (can't continue after bugcheck): [&OK]  </h4>
+    <span class="descricao-sql">Quando cliente tenta fechar o turno no PDV, essa mensagem é apresentada, provavelmente a tabela caixa_abertura_turno esta com alguma inconsistência de dados no roteador </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+1 - Executar restore no banco do roteador pelo CMD, e logo em seguida, realizar otimização do banco pela interface do roteador 
+ 
+2 - Comando CMD para restore do roteador
+ 
+SET ISC_USER=SYSDBA
+SET ISC_PASSWORD=masterkey
+GFIX -C ALL C:\REDESOFT\ROTEADOR\BANCO.FDB
+GFIX -M -I C:\REDESOFT\ROTEADOR\BANCO.FDB
+GBAK -G -B -V C:\REDESOFT\ROTEADOR\BANCO.FDB C:\REDESOFT\ROTEADOR\BKP_BANCO.GBK
+GBAK -G -R -V -P 4096 C:\REDESOFT\ROTEADOR\BKP_BANCO.GBK C:\REDESOFT\ROTEADOR\BANCO_RECUPERADO.FDB
+GFIX -V -F C:\REDESOFT\ROTEADOR\BANCO_RECUPERADO.FDB
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+                <div class="postagem"> <!-- abertura postagem-->
+    <h4> 19 - Erro ao tentar abrir o PAF: EXCEPTION Type EFIBInterBaseError, message: :
+Unsuccessful execution caused by a system error that precludes successful execution of subsequent statements.I/O error during "CreateFile (open)" operation for file "C:\REDESOFT\B2CLICKPAF\BASEPAF.FDB".
+Error while trying to open file.
+O arquivo já está sendo usado por outro processo.  </h4>
+    <span class="descricao-sql">Erro devido ao serviço do Firebird esta travado com o arquivo do banco do PAF </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+    
+1 - Reiniciar o serviço do Firebird
+ 
+2 - Caso o passo anterior não funcione, vai ser necessário desinstalar o firebird e reinstalar novamente 
+ 
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+                <div class="postagem"> <!-- abertura postagem-->
+    <h4> 20 - Erro ao tentar passar cartão: versão client não autorizada  </h4>
+    <span class="descricao-sql">Ao tentar passar um cartão esse erro se apresenta assim que é selecionada uma forma de pagamento TEF dedicada </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+    
+Trocar a DLL "CliSiTef32I.dll" na pasta do PAF para dll mais atual, encontrará essa DLL no keep de TEF, após a troca, reiniciar o sistema e estará resolvido.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+                <div class="postagem"> <!-- abertura postagem-->
+    <h4> 21 - MENSAGEM DO ROTEADOR: abertura_bico.ConsultarBicosDisponiveisParaAbrir-Erro ao tentar obter o encerrante em litros para o bico de código '1|16': 2  O objeto referenciado não existe </h4>
+    <span class="descricao-sql"> Erro ocorre quando o cliente tenta abrir ou fechar os bicos mas o sistema não consegue encontrar nenhum bico no concentrador com o código de automação informado no erro, provavelmente o código do bico mudou na automação mas não corrigiram no retaguarda </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Alterar cadastro do bico no retaguarda: Precisamos descobrir qual o novo código de automaçao do bico, para informar ao cliente e ele alterar no retaguarda, podemos para pedir para o cliente abastecer no referido bico um valor pequeno para que quando o abastecimento cair no banco do roteador possamos ver qual código do bico de automação.
+Após identificar o código, passar para o cliente e solicitar que ele faça a correção, ao receber consolidação após a alteração no retaguarda vai abrir normalmente.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+<div class="postagem"> <!-- abertura postagem-->
+    <h4> 22 - MENSAGEM DO ROTEADOR: abertura_bico.ConsultaFechamentoDeBico-Erro ao tentar obter o encerrante em litros para o bico de código '15': Dados não capturados </h4>
+    <span class="descricao-sql"> Erro ocorre quando tenta abrir ou fechar bico e está associado a falta de comunicação da automação que tem comunicação por porta COM </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Vericar porta COM observar se alguma aplicação como CBC está aberta usando a porta de comunicação, após essa verificação solicitar o cliente tentar trocar porta no PC, por último podemos reiniciar o PC e solicitar ao cliente reiniciar concentrador de bombas, se após esses procedimentos não voltar a funcionar, o cliente vai precisar contactar o técnico de automação para verificar a comunicação com o PC
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+     <div class="postagem"> <!-- abertura postagem-->
+    <h4> 23 - Pasta de envio configurada sem \ no fim </h4>
+    <span class="descricao-sql">Retorno quando o cliente tenta passar cartão, cliente TEF discado não consegue passar o cartão. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Verificar configuração no retaguarda para clientes tef discado, no retaguarda configuramos o caminho no qual o sistema vai procurar o tef discado do cliente para finalizar a venda.
+retaguarda do cliente> módulo operacional > opção B "cadastro de formas de pagamento de venda" > localizar a forma > aba "cartão/pay" > sub aba "configurações" > campo "TEF discado" > verificar se o caminho da pasta TEF discado informado está correto, conforme está no PDV, e se no fim do caminho informado no campo, se está com uma contra-barra no final "\"
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem--> 
+      <div class="postagem"> <!-- abertura postagem-->
+    <h4> 24 - A venda em aberto não pertence ao caixa informado
+Caixa da Venda(7505) em aberto: 261
+Caixa enviado para comparação: 265 </h4>
+    <span class="descricao-sql">Erro ocorre quando o cliente tenta acessar um caixa de algum funcionário mas existe um outro caixa com o cupom aberto, uma venda na tela o sistema informa justamente isso.</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Precisamos acessar o caixa com a venda e cancelar o cupom aberto, o próprio erro nos informa qual o código de caixa que no caso é o 261, acessamos o caixa e ou cancelamos o cupom aberto ou finalizamos a venda, quando não aparece a venda na tela, apenas cancelamos o cupom aberto.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->   
+
+                <div class="postagem"> <!-- abertura postagem-->
+    <h4> 25 - Este abastecimento já está vinculado a uma venda neste terminal, tente novamente quando o roteador estiver ativo. (Caso o roteador esteja ativo, entre em contato com a REDESOFT) </h4>
+    <span class="descricao-sql">Erro ocorre geralmente com roteador é recém gerado, mas pode acontecer em outras situações, o erro informa que o abastecimento que está tentando ser baixado já foi baixado em outro PDV, ou no mesmo PDV, isso ocorre porque quando o roteador é novo os abastecimentos comecam a cair com códigos que já foram usados por outro roteador, provalvemente o roteador que se perdeu. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Vamos precisar alterar os cod_abastecimento para valores não usados e evitar esse erro, para isso vamos executar 2 passos:
+ 
+1 - Consultar o último código abasteceimento na retaguarda, Acessar o retaguarda > "módulo operacionar" > selecionar "caixas" > opção D "consulta de abastecimento" > adicionar um filtro para que voce veja o ultimo abastecimento que subiu ao servidor entre ontem e hoje
+ 
+2 - incrementar no roteador, vamos executar uma SQL para incrementar no roteador para mudar o codigo de abastecimento para um valor maior do que o ultimo abastecimento que foi recebido no retaguarda.
+ 
+Antes de executar SQL > parar roteador e automação > alterar dados de abastecimento na SQL abaixo em vermelho > utilizar o número de último abastecimento no retaguarda e colocar mil códigos a mais para que haja margem para não haver erro.
+ 
+ 
+update abastecimento
+set cod_abastecimento = cod_abastecimento + 10000 < (alterar ultimo abastecimento retaguarda + 1000)
+ 
+Executar sql no roteador > verificar qual o número do último abastecimento após SQL rodar > colocar esse número + 1 em generaitor de abastecimento > iniciar roteador e pedir pra testar já vai está resolvido 
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
         </div>
 
         </div>
