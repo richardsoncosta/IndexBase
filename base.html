@@ -1112,6 +1112,517 @@ Verificar no retaguarda as circustâncias que se encontram esse produto, se real
 <br>
 <hr>
     </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 41 - Erro executando SQL XSQLDA index out of range
+SQL: 
+update or insert into VENDA (
+COD_VENDA
+,COD_PAF_BANCO
+,COD_EMPRESA
+,COD_USUARIO
+,CUPOM_ABERTO
+,ROTEADOR
+,COD_AGENTE_OPERADOR
+,COD_CAIXA_ABERTURA_TURNO  </h4>
+    <span class="descricao-sql"> Erro ocorre na tentativa de abrir uma venda, mas no cadastro do agente algum caracter invalido impede o sistema de abrir a venda</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+    
+Verificar no retaguarda qual campo do cadastro do agente possui a informação que estoura o campo, algum caracter especial, sinal de acentuação, cedilha, traço etc
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 42 - The element 'encerrante' in namespace 'http://www.portalfiscal.inf.br/nfe' has invalid child element 'vEncIni' in namespace 'http://www.portalfiscal.inf.br/nfe'. List of possible elements expected: 'nBomba, nTanque' in namespace 'http://www.portalfiscal.inf.br/nfe'.
+Caminho: enviNFe/NFe[1]/infNFe/det[1]/prod/comb/encerrante/vEncIni  </h4>
+    <span class="descricao-sql"> Erro ocorre na tentativa de abrir qualquer venda no PDV e está ligado ao cadastro de tanque no retaguarda, cadastro dos tanques com nomenclatura inválida</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+    
+Verificar no retaguarda se os tanques estão com a nomenclatura dentro do padrão aceito pela sefaz ("TQ01" padrão) se estiverem, verificar no banco se está igual ao retaguarda
+IBO > Basepaf > Tabela "produto_tanque" > nomenclatura deve esta fora do padrão descrito acima, e esse é o problema, solicitar que o cliente altere no retaguarda para o padrão correto.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 43 - Excesso de tentativas de executar o evento 52242-, por favor tente novamente mais tarde. 
+Se o problema persistir contate a REDESOFT
+Mensagem:  </h4>
+    <span class="descricao-sql"> Erro apos uma operação de venda ou opnf no PDV, tem relação com a tentativa do sistema de concluir a operação de um evento na tabela evento</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para solução: 
+    
+Casos como esse são estritamente únicos, cada um possui uma particularidade que influência na decisão para resolução, precisamos verificar na tabela evento do PAF qual evento esta falhando, precisamos verificar no LOG do PDV em que momento esse erro começou a aparecer, e relacionar o erro a venda ou operação realizada no PDV, era uma sangria? A sangria falhou e o evento travou? Era uma baixa de título? o título foi baixado? Era uma venda? a venda foi finalizada com sucesso? Se algo falhou vamos destravar o evento e pedir para o cliente refazer a operação? tudo deve ser avaliado pra que possamos tomar a melhor decisão para resolução do erro de evento
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 44 - Erro ao transmitir dados para o roteador:  
+MENSAGEM DO ROTEADOR: dadosPDV.AtualizarDadosPDV-update or insert into PRODUTO_FILIAL (COD_USUARIO,COD_EMPRESA,COD_PRODUTO_FILIAL,MOMENTO,COD_PRODUTO,COD_PRODUTO_TRIBUTACAO,TIPO_ITEM,PVENDA,STATUS,SOMENTE_COM_CODIGO_DE_BARRAS,VMAXIMO_VENDA,DESC_MAXIMO_VENDEDOR,DESC_MAXIMO_GERENTE,USA_DESCONTO_GRUPO,IPPT,IAT,ULTIMO_PMC
+Dynamic SQL Error
+SQL error code = -303
+arithmetic exception, numeric overflow, or string truncation
+numeric value is out of range
+Por favor, vefique se o roteador está ativo e reinicie o B2ClickPDV. Caso o problema persista, entre em contato com o suporte da REDESOFT.  </h4>
+    <span class="descricao-sql"> Erro ocorre ao tentar receber consolidação no PDV e tem relação com a tabela "produto_filial"</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Ainda não se sabe a cusa e=legitima do erro, mas a sulução aplicada pelo nivel 2 junto ao desenvolvimento foram algumas alterações no banco
+ 
+1 - Na ocasião do erro a tabela "produto_filial" > coluna "roteador" o desenvolvimento fez a alteração para "FALSE" resolvendo por hora o problema
+ 
+2 - Em outra situação semelhante o operador Douglas trocou a versão do roteador de 108 para 116, tambem resolvendo o problema
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 45 -Existe venda com pagamento cancelado e venda nao cancelada. Faça o cancelamento da venda para continuar a operaçao
+TRANSAÇÃO NÃO EFETUADA: EXISTEM VENDAS NÃO CANCELADAS COM PAGAMENTOS CANCELADOS! </h4>
+    <span class="descricao-sql"> Erro ocorre quando a venda por algum motivo não é finalizada como deveria, e nos informa que as formas de pagamento cartão e etc nao foram canceladas </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+
+Vamos cancelar a venda, fazer os itens ou abastecimentos voltarem a tela, para o cliente refazer a venda, se essavenda foi feita no cartão e foi aprovada, cliente vai precisar baixar em dinheiro e na conferencia de caixa corrigir devidamente.
+
+
+1 -   Parte da soluçao Banco do  PAF
+
+update venda
+set cod_usuario_cancelou = cod_agente_operador,
+cancelada='SIM',
+cancelada_ecf='NAO',
+valor_total= null
+where cod_venda = 16977
+and cod_caixa_abertura_turno = 983;
+
+update venda_itens
+set qtd_cancelada = quantidade,
+quantidade = 0,
+cancelado_ecf = 'SIM',
+valor_cancelado_ecf = total_ecf,
+total_ecf = 0,
+desconto_acrescimo_ecf = 0
+where cod_venda = 16977
+and cod_caixa_abertura_turno = 983;
+
+2 - Parte da soluçao na celula da esquerda sql para ROTEADOR
+
+update venda
+set cod_usuario_cancelou = cod_agente_operador,
+cancelada='SIM',
+cancelada_ecf='NAO',
+valor_total= null
+where cod_venda = 16977
+and cod_caixa_abertura_turno = 983;
+
+update venda_itens
+set qtd_cancelada = quantidade,
+quantidade = 0,
+cancelado_ecf = 'SIM',
+valor_cancelado_ecf = total_ecf,
+total_ecf = 0,
+desconto_acrescimo_ecf = 0
+where cod_venda = 16977
+and cod_caixa_abertura_turno = 983;
+
+update ABASTECIMENTO SET
+SITUACAO = 0,
+COD_VENDA = 0
+WHERE COD_VENDA= 16977
+
+3 - Após a execução de ambas sql, reiniciar roteador, e verificar se o abastecimento voltou pra tela, orientar o cliente baixar a venda e informar que no retaguarda pode ser corrigido a parte da forma de pagamento que não foi em dinheiro
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 46 - Não existe configuração de alíquotas para a tributação 125 nesta data  </h4>
+    <span class="descricao-sql">Erro ocorre quando o cliente tenta acessar um caixa ja aberto para realizar vendas, esta relacionada a esse caixa ja ter um cupom aberto, mas por algum erro no banco ou mudaças na tributaçao ocorre esse erro na tributaçao do cupom aberto. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+    
+1 - Verificar cadastro da empresa > aba financeiro > verificar validade de regime de tributação 
+ 
+2 - Verificar aba contador > Validade CRC
+ 
+3 - Verificar data final da tributação informada no erro  
+ 
+4 - Salvat todos os cadastro e receber consolidação
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 47 - Erro na execução da SQL:
+
+select cod_venda
+from VENDA_TOTEN
+where COD_VENDA_TOTEN = 23363
+and UPPER (coalesce(CUPOM_ABERTO,') <> 'FALSE' </h4>
+    <span class="descricao-sql">Erro tentar executar qualquer tarefa no pdv esse erro aparece e pode está relacionado a duas tabelas no banco do paf são elas BUFFER_TEF ou BUFFER_CDIGITAL </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+ 
+1 - Verificar em ambas as tabelas BUFFER_TEF ou BUFFER_CDIGITAL se o COD_VENDA_TOTEN esta presente, e na coluda 'PENDENTE' do referido código se estiver 'TRUE'> alterar para> 'FALSE'>comitar e testar, provavelmente vai esta resolvido.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 48 - Não foi possível registrar a venda do item de código 1890109
+Valor máximo por item (R$ 10.000,00) atingido na venda do produto 1890109
+ 
+DIGITE OK PARA CONTINUAR
+   </h4>
+    <span class="descricao-sql">Erro devido a uma limitação configurada no retaguarda do cliente. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+1 - Na parte de configurações do PDV > em configurações 2 > existe o campo "total máximo de cada item em R$" que caso preenchido limita que um item com um valor maior do que o preenchido nesse campo seja vendido sem que haja liberação com senha de um usuario autorizado, logo para que a mensagem de erro não atrapalhe, devemos solicitar que o pessoal autorizado no posto ajuste esse campo tirando a restrição ou aumentado o valor.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 49 - Título(s) 4783540 já recebido(s) nesta empresa </h4>
+    <span class="descricao-sql"> Precisaremos consultar esse título no retaguarda do cliente, precisamos confirmar se o título já foi baixado ou se ainda está em aberto, caso ainda esteja em aberto, por algum erro no banco do roteador consta ele como já quitado, uma das hipóteses é que em outro momento já foi tentado realizar essa operação e ela falhou, mas os procedimentos de baixas travaram na metade.</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para Correção:
+
+1 – Caso após a consulta no retaguarda o título já esteja quitado, obviamente que o título foi quitado em algum outro momento e vamos informar ao cliente que não é possível utilizar titulo quitado.
+
+2 – Caso o titulo não esteja quitado no teraguarda precisamos alterar ou remover o código do título em venda_opnf no banco do roteador coluna cod_fin_titulo. Caso não saiba o código de venda OPFN que esteja usando esse título podemos filtrar pelo código de título apresentado no erro usando a coluna cod_fin_titulo para filtrar
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 50 - Setor nao informado para o produto  </h4>
+    <span class="descricao-sql"> Erro pode estar relacionado a um PDV recém gerado que fala a informação default para consulta e vendas de produtos, ou a um PDV que vai utilizar pela primeira vez a integração de DAV</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+
+1 - Nas configurações de PAF > Aba Diversos> devemos informar código do setor no campo superior direito, "Setor default consulta produtos/DAV" > clicar no campo > pressionar F11 para ver os setores disponíveis . informar o setor a depender do caso e gravar alterações.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+<div class="postagem"> <!-- abertura postagem-->
+    <h4> 51 - Ocorreu um erro ao baixar os abastecimentos pendentes. Motivo: Este codigo de venda existe na tabela   </h4>
+    <span class="descricao-sql">Erro pode esta relacionado a 3 causas, a primeira e mais provavel falta de certificado digital na maquina, abastecimento sem identifid que ao tentar realizar baixa automatica o sistema fica com o cupom preso, e cupom aberto preso. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+ 
+1 - Acessar configurações do PDV > aba de NFCE > remover e adicionar certificado digital
+2 - Cancelar cupom aberto em F8 operaçoes > cancelar cupom aberto
+3 - Abastecientos sem identifid, o sistem pode tentar baixar uma venda de abastecimento automaticamente, mas se o abastecimento estiver sem identifid pode ter ficado travado na abertura da venda, precisamos inserir o identfid no  abastecimento.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 52 - 225 - Rejeicao: Falha no Schema XML da NFe The 'http://www.portalfiscal.inf.br/nfe:uTrib' element is invalid - The value ' UN' is invalid according to its datatype 'String' - The Pattern constraint failed. </h4>
+    <span class="descricao-sql">Como o erro nos informa, a unidade de algum produto na venda está fora dos parâmetros aceitos pela Sefaz, analisando o caso o problema está que no cadastro do produto foi inserido um espaço em branco antes das letras UN por exemplo " UN" </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+
+1 - O caso em questão apenas atualizar o cadastro do produto não é suficiente, por mais que recebamos a consolidação o PDV não atualiza na tabela o novo formato de unidade, vamos precisar alterar manualmente nas vendas, na tabela "venda_itens", coluna "unidade" que a depender da quantidade de itens pode demorar muito.
+
+2 - Nesse caso podemos usar a sql:
+
+ALTER TRIGGER TRIG_RDB$TRIGGERS_1 INACTIVE;
+ALTER TRIGGER INS$venda_itens INACTIVE; 
+ 
+update venda_itens
+set unidade = "UN"
+where unidade = " UN"
+ 
+3 - Executada sql, podemos transmitir as vendas
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+<div class="postagem"> <!-- abertura postagem-->
+    <h4> 53 - Contingencia com retorno : 865 Total dos pagamentos menor que o valor total da nota </h4>
+    <span class="descricao-sql">Provavelmente devido a algum desconto, o somatório está arredondando para um valor que a sefaz informa como sendo diferente do valor total da venda </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+
+1 - Após analisar o XML, podemos verificar qual seria o valor total da venda > na tabela VENDA_FECHAMENTO > vamos conferir e se necessario mudar para o valor correto total da vend as colunas > VALOR > VALOR_FORMA > VALOR_DIGITADO > colocar o valor total da nfe > transmitir
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 54 - Caixa nao pode ser encerrado, existe notas em contingencias que ainda nao foram enviadas.
+O envio de notas em contingencia apos um periodo de 24horas uteis é passivel de multa pelo Sefaz </h4>
+    <span class="descricao-sql"> Erro de contingência do sistema PLsof </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+
+1 - Abri PLSoft>Clica em “Movimento do caixa”>Clicar “Contas finalizadas”>Clicar “gerar notas pendentes”> as contingencias serão transmitidas caso não haja nenhum problema a ser corrigido em produtos e afins
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    
+ <div class="postagem"> <!-- abertura postagem-->
+    <h4> 55 - Não foi possível registrar a venda do item de código 30059
+
+Não foi encontrada associação entre o destinatário da NF-e com o campo 'TIPO FISCAL DE VENDA' informado na abertura da venda, com isso, não é possível concluir a tributação a ser utilizada.  </h4>
+    <span class="descricao-sql"> Em alguns casos de venda NFE no PDV o operador de caixa seleciona o tipo de venda errado na tela onde se preenche dados do cliente da nota no canto superior esquerdo da tela de abertura de venda</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+
+1 - Verificar cadastro do produto na aba de operações se existe algum tipo fiscal informado.
+
+Caso não haja.
+
+Verificar se na abertura da venda no PDV é informado um tipo fiscal específico.
+
+2 - Com o "tipo fiscal" informado, vamos verificar no "cadastro de tipos fiscais para PDV" no retaguarda do cliente, ver qual o "número de documento" esse tipo fiscal utiliza para vender.
+
+3 - Com o "número de documento", vamos verificar o "Cadastro de tipos de documentos fiscais", localizar na aba de "tipos de operações" o nome exato que vemos em "tipo de documento" (EX: "Venda para fora da UF"), verificar as parametrizações em relação ao cliente informado na venda,  cliente de destino é de dentro ou fora da UF? O tipo de documento cadastrado permite venda para fora da UF? 
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+<div class="postagem"> <!-- abertura postagem-->
+    <h4> 56 - empresa 4 entidade POSTOSCUNHA tabela VENDA_ITENS chave 113725
+Produto 180004 não encontrado na filial 4
+ empresa 4 entidade POSTOSCUNHA tabela VENDA_ITENS chave 113728
+Produto 180004 não encontrado na filial 4  </h4>
+    <span class="descricao-sql">Produto com preço zerado no retaguarda, sem tributaçao e sem tipo de venda, para o frente de loja esse produto fica inativo e caso haja venda dele no PDV ao consolidar o frente de loja retorna o erro </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+1 - Verificar cadastro do produto informado no erro, verificar preço de venda não pode ser zerado > Verificar tributação > e tipo de venda configurado, se estiver sem essa configuração orientar ao cliente corrigir, somente depois da correção o PDV vai parar com a mensagem de erro
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+   <div class="postagem"> <!-- abertura postagem-->
+    <h4> 57 - Não existe configuração de alíquotas para a tributação 125 nesta data  </h4>
+    <span class="descricao-sql">Cadastro da empresa com data de tributação vencida </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+ 
+ 
+1 - Cadastro da empresa > aba financeiro > verificar validade de regime de tributação 
+ 
+2 - Cadastro da empresa > aba contador > Validade CrC
+ 
+3 - Cadastro de tributação > Verificar data final da tributação informada no erro  
+ 
+4 - Salvar todos os cadastro e receber consolidação
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem--> 
+    
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 58 - Venda já finalizada e ainda está sendo apresentada no caixa. entre em contato com o suporte da redesoft </h4>
+    <span class="descricao-sql"> Erro em decorrência de uma venda não finalizada totalmente.</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+1 - Verificar se a venda possui protocolo, e consultar a chave na sefaz
+4 - Se a venda estiver valida na sefaz, Verificar na tabela "venda", "valor" Se estiver sem valor, localizar no log o valor da venda e colocar o valor correto, na tabela "cupom_aberto" setar o "False"
+2 - Após as correções tentar consolidar e verificar se chegou ao retaguarda a venda.
+3 - Se a chave não estiver válida na sefaz, rodar SQL de cancelamento de venda (Pesquisar nas SQLs da base)
+4 - Caso tenha executado a SQL de cancelamento com sucesso, pedir para o cliente refazer a venda
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 69 - Erro na execução da SQL: 
+update CAIXA_ABERTURA_TURNO set SANGRIA_DINHEIRO=
+coalesce(SANGRIA_DINHEIRO, 0)+:SANGRIA_DINHEIRO
+where COD_EMPRESA=:COD_EMPRESA
+and COD_CAIXA_ABERTURA_TURNO=:COD_CAIXA_ABERTURA_TURNO
+ 
+Mensagem: lock conflict on no wait transaction
+deadlock
+update conflicts with concurrent update
+concurrent transaction number is 423372  </h4>
+    <span class="descricao-sql"> Provavelmente algum registro da tabela sangria está com inconsistência.</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+ 
+1 - Executar restore na interface do b2click pelo sim
+2 - Executar restore na interface do b2click pelo não
+3 - Na ocasião da catalogação desse erro, os restores pela interface do sistema resolveram o problema, caso para voce não funcione, pode-se tentar o restore pelo CMD (Pesquisar nas SQLs e CMDs da base))
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+<div class="postagem"> <!-- abertura postagem-->
+    <h4> 60 - exception 1
+NONAME
+Por razoes de seguranca nao e permitido fazer modificacoes neste banco
+At trigger 'INS$EVENTO' line: 8, col: 1</h4>
+    <span class="descricao-sql">Banco com inconsistência em relação as permissões de alteração do banco, esse erro ocorreu no momento de tentar abrir configurações do PAF, o que não deveria. Visto que as operações da interface do sistema têm as permissões para alterações diretas no banco </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+
+1 - Restore no banco pelo CMD resolveu no caso que levou o erro a catalogação
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->    
+    
         </div>
 
         </div>
