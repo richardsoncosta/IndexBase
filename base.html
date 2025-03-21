@@ -754,6 +754,364 @@ Executar sql no roteador > verificar qual o número do último abastecimento ap�
 <br>
 <hr>
     </div> <!-- fechamento postagem-->
+<div class="postagem"> <!-- abertura postagem-->
+    <h4> 26 - Não ha estoque suficiente no tanque deste combustivel </h4>
+    <span class="descricao-sql"> Erro ocorre quando ha tentativa de abrir uma venda rpovavelmente em um caixa de banco recem gerado onde informaões do tanque do produto ficma incompletas no banco</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+resolvemos executando essa SQL no PAF
+ 
+insert into ESTOQUE_TANQUE (COD_EMPRESA, COD_ESTOQUE_TANQUE, COD_PRODUTO_TANQUE, DATA, ESTOQUE_ABERTURA)
+select cod_empresa, 0, cod_produto_tanque, current_date, 99999999
+from produto_tanque<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+           <div class="postagem"> <!-- abertura postagem-->
+    <h4> 27 - RETORNO NOTA: 629 - Rejeição: Valor do Produto difere do produto Valor Unitário de Comercialização e Quantidade Comercial  </h4>
+    <span class="descricao-sql">Esse retorno ocorre quando o sistema ao multiplicar o valor do produto por sua quantidade o cálculo não sai corretamente. Por exemplo, quando compramos 2kg de açúcar a R$9,99, o PAF fecha a venda e tenta transmitir a nota com o valor de R$20,00. No entanto o valor correto é R$19,98 </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Com a venda aberta na tela do erro> copiamos o XML> abrimos o validador xml>analisamos o preço do produto que a sefaz rejeita> ao minimizar PAF>abrimos IBO>no banco PAF>localizamos a última venda aberta>na  tabela "venda">identificamos n° da venda > com o número da venda abrimos a tabela "venda_itens">filtramos pelo código da venda>analisamos os produtos com erro no valor (a mensagem de retorno já nos diz o número do item com erro) > foque no produto causador do erro: 
+ 
+qTrib * vUnTrib – vProd = Diferença: Olhando os dados do XML resolva a equação qTrib * vUnTrib = Total – vProd = Diferença Ex: 100 * 6,491 = 649,01 – 649,05 = 0,04, O total dessa conta vai está diferente para mais ou para menos do que o valor calculado pelo sistema> considerando essa diferença sendo para mais ou menos>devemos subtrair ou adicionar na coluna do banco>"total_ecf" em "venda_itens", a lógica é a seguinte: se a diferença é positiva, você adiciona a diferença de "total_ecf", se a diferença é negativa você subtrai o valor a "total_ecf"
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem--> 
+                
+         <div class="postagem"> <!-- abertura postagem-->
+    <h4> 28 - Problema na validação do XML da venda: '2022-01-06T09:10:20' viola a restrição pattern de '(((20(([02468][048])|([13579][26]))-02-29))|(20[0-9][0-9])- ((((0[1-9])|(1[0-2]))-((0[1-9])|(1\d)|(2[0- 8])))|((((0[13578])|(1[02]))-31)|(((0[1,3-9])|(1[0-2]))- (29|30)))))T(20|21|22|23|[0-1]\d):[0-5]\d:[0-5]\d([\-,\+](0[0- 9]|10|11):00|([\+](12):00))'. Falha da análise do elemento '{http://www.portalfiscal.inf.br/nfe}dhEmi' com valor '2022- 01-06T09:10:20'. </h4>
+    <span class="descricao-sql"> Erro ocorre devido ao fuso horário nas configurações do PAF esta incorreto. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Basta acessar  configurações do PAF na aba de NFE e alterar para o fuso-horario correto
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->  
+     <div class="postagem"> <!-- abertura postagem-->
+    <h4> 29 - Problema ao abrir PDV sistema simplismente não abre sem apresentar qualquer erro </h4>
+    <span class="descricao-sql">Erro ocorre quando clicamos em abrir o PAF, mas o PAF não abre nada além de instancias de processos no gerenciador de tarefas, isso acontece em decorrência de um problema no Windows do cliente, quando executamos o sistema do PAF o PAF antes de abrir executa uma tarefa de Spooler de impressão, e somente depois dessa tarefa ele abre, e nesse caso o cliente estava com problemas no windons que os serviços de spooler e impressão não estavam funcionando, assim o sistema nao executava a tarefa para depois abrir. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+
+Informar o cliente acerca do erro, e informar que caso ele não consiga fazer os serviços de impressão operar normalmente vai precisar formatar a máquina, inclusive podemos exemplificar para ele que nem conseguir definir impressora padrão no sistema é possível com esse problema.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->  
+                <div class="postagem"> <!-- abertura postagem-->
+    <h4> 30 - Não for possivel localzar o número ordinal 4369 na biblioteca de vinculo dinamico libeay32.d.dll </h4>
+    <span class="descricao-sql"> Erro no windows 7 ao tentar executar o roteador, ocorre em decorrência da falta de uma DLL do windows na pasta C:Windows\System32 (Windows XP, Vista, 7)
+ </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+
+Para correção:
+    
+Corrigimos apenas colocando a dll faltante na pasta C:Windows\System32 (Windows XP, Vista, 7) ou C:\Windows\ SysWOW64 (Windows 7-64 bits ou 8 – 64 bists)
+ 
+Podemos encontrar e fazer dowload do arquivo dll no https://pt.dll-files.com/libeay32.dll.html
+    
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+       <div class="postagem"> <!-- abertura postagem-->
+    <h4> 31 - A execução de código não pode continuar porque imm32.dll Xnão foi encontrado. Reinstalando o programa para corrigir o problema.</h4>
+    <span class="descricao-sql">Erro no windows 7 ao tentar executar o roteador, ocorre em decorrência da falta de uma DLL do windows na pasta C:Windows\System32 (Windows XP, Vista, 7) </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Corrigimos apenas colocar a dll faltante na pasta C:\Windows\System32 (Windows XP, Vista, 7 32-bits) ou C:\Windows\ SysWOW64 (Windows 7-64 bits ou 8 – 64 bists)
+ 
+Podemos encontrar e fazer dowload do arquivo dll no https://pt.dll-files.com/imm32.dll.html
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->  
+         <div class="postagem"> <!-- abertura postagem-->
+    <h4> 32 - Erro executando SQL lock conflict on no wait transaction
+deadlock
+update conflicts with concurrent update
+concurrent transaction number is 1963964
+SQL: 
+update CAIXA_ABERTURA_TURNO set CONSOLIDOUP = 'true'
+where COD_EMPRESA = 1
+and COD_PAF_BANCO = 2
+and COD_CAIXA_ABERTURA_TURNO = 4841;  </h4>
+    <span class="descricao-sql"> Erro ocorre devido a consolidação do PDV, ou melhor, do conflito de consolidações, por default o PDV faz consolidações automáticas e periódicas em segundo plano, por isso, se durante uma dessas consolidações automáticas clicarmos em ( F5 > consolidação) estaremos forçando o PDV a fazer 2 consolidações ao mesmo tempo, por isso o erro ocorre. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Basta aguardar a consolidação automatica terminar 
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem--> 
+     <div class="postagem"> <!-- abertura postagem-->
+    <h4> 33 - Erro na execução da SQL: 
+select vfdep.* from (
+select * from VENDA_PREMMIA
+where CONSOLIDOUP = 'false') vp
+JOIN CAIXA_ABERTURA_TURNO CAT ON 
+CAT.COD_CAIXA_ABERTURA_TURNO = vp.COD_CAIXA_ABERTURA_TURNO AND
+CAT.COD_EMPRESA = vp.COD_EMPRESA AND 
+CAT.COD_PAF_BANCO = vp.COD_PAF_BANCO
+JOIN VENDA V ON 
+V.COD_VENDA = vp.COD_VENDA AND
+V.COD_EMPRESA = vp.COD_EMPRESA AND 
+V.COD_PAF_BANCO = vp.COD_PAF_BANCO
+left join venda_nfe vn on v.cod_venda = vn.cod_venda and v.cod_empresa = vn.cod_empresa and v.cod_paf_banco = vn.cod_paf_banco
+where V.CONSOLIDOUP = 'true'
+and v.CUPOM_ABERTO <> 'TRUE'
+and (v.tipo_nota <> 3 or (v.tipo_nota = 3 and (v.CANCELADA = 'SIM' or coalesce(vn.PROTOCOLO,'')<>'' or coalesce(vn.protocolo_inutilizacao,'')<>'')))
+ 
+Mensagem: Dynamic SQL Error
+SQL error code = -206
+Column unknown
+VFDEP.*
+At line 1, column 8 </h4>
+    <span class="descricao-sql">Erro ocorre quando tentamos realizar consolidação no PDV e está relacionado a versão do EXE, esse erro especificamente é de uma versão de PDV que não possui uma tabela que já existe no roeador e servidor, por isso ao tentar realizar a consolidação o erro se apresenta. </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Trocar verão do PAF para uma versão compatível
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 34 - Não foi possível finalizar a venda
+Mensagem: Não obtive resposta do SAT MENSAGEM DO ROTEADOR: SAT.transmiteVenda-ERRO no processamento do comando no SAT
+06099 - NÃ£o foi possÃ vel se comunicar com o SAT.  </h4>
+    <span class="descricao-sql">Erro ocorre ao tentar realizar vendas em clientes de São Paulo, caso a devida comunicação não exista entre o sistema e o SAT o erro ocorre.</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Precisamos fazer algumas validações diferentes a depender do fabricante do SAT
+ 
+Dimep:
+Bematech:
+Elgin:
+Tanca:
+Urano: SAT da Urano: Acessar software configurador do SAT > So vamos conseguir conectar no SAT se o PDV estiver fechado > 
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 35 - Não foi possível finalizar a venda
+Mensagem: Não obtive resposta do SAT MENSAGEM DO ROTEADOR: SAT.transmiteVenda-Access violation at address 6E7B4AD8 in module 'SAT.DLL'. Write of address 6FAF1000
+<?xml version="1.0" encoding="UTF-8"?><CFe><infCFe versaoDadosEnt="0.07"><ide>   <CNPJ>05017821000154</CNPJ>  </h4>
+    <span class="descricao-sql"> Erro de DLL de SAT para comunicação do sistema</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Trocar DLL e arquivos na pasta de comunicação do SAT, caso o PDV se comunica com o SAT pelo própio PDV ou pelo roteador 
+ 
+Dimep: Para SAT dimep precisamos colocar a dll da dimep e seus arquivos auxiliares na pasta sistema seja roteador ou paf (a depender da configuração do PDV), voce pode encontrar essa dll na aba de dowload aqui do My Suite Após subistituir a dll, reiniciar roteador ou PAF e testar o sistema
+Bematech:
+Elgin:
+Tanca:
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 36 - Não foi possível finalizar a venda
+Mensagem: Não obtive resposta do SAT MENSAGEM DO ROTEADOR: SAT.transmiteVenda-ERRO no processamento do comando no SAT
+06010 - RejeiÃ§Ã£o: Erro nÃ£o identificado  </h4>
+    <span class="descricao-sql">Erro ocorreu ao tentar finalizar venda, ao analizar no momento de abertura de venda o frentista informou um dado invalido e ao finalizar a sefaz rejeitou a venda </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+    
+Cancelar cupom aberto e pedir para cliente refazer a venda, observando todos os dados informados se há algum valor inválido é preenchido ou até mesmo o código de agente inexistente
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 37 - Erro consultando status do lote: 611 - cEAN invalido [nItem:1]  </h4>
+    <span class="descricao-sql"> Caso o código já esteja correto no cadastro do produto pode esta acontecendo que em algumas entidades como Multipostos, quando existe uma atualizaçao no código de barras dos produtos o banco de dados não atualiza o registro, ele cria uma nova linha com o novo código, então no banco o mesmo produto tem 2 códigos de barras o novo e o antigo, 1 em cada linha.</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+
+Precisamos remover o código de barras antigo do banco de dados e tentar transmitir a venda
+
+Para isso acessamos IBO > banco do PAF > tabela "produto_barras" > filtramos pelo código do produto > haveram duas linhas de códigos de barras para o mesmo produto, nesse caso nos copiamos o código da linha mais recente e colamos na mais antiga, ou excluimos a mais antiga, como preferir.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+  <div class="postagem"> <!-- abertura postagem-->
+    <h4> 38 - Verifique a conexão com a internet ou as libs openSSL disponível no sistema  </h4>
+    <span class="descricao-sql"> Erro na tentativa de finalizar vendas usando carteira digital, esse eero sempre esta atralado as dlls de carteiras digitais na pasta do PAF</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+
+Trocar dlls de carteira digitais na pasta do PAF, você pode colocar as dlls disponíveis aqui no my suite na aba de dowloads.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->  
+
+   <div class="postagem"> <!-- abertura postagem-->
+    <h4> 39 - rejeicao 378 - combustivel sem informaçao de encerrante  </h4>
+    <span class="descricao-sql"> Erro ocorre devido a uma regra de validação 378 se aplica somente para os códigos de produtos ANP (cProdANP) abaixo:
+810101002 - ETANOL HIDRATADO ADITIVADO;
+810101001 - ETANOL HIDRATADO COMUM;
+220101005 - GÁS NATURAL VEICULAR;
+220101006 - GÁS NATURAL VEICULAR PADRÃO;
+320103001 - GASOLINA AUTOMOTIVA PADRÃO;
+320102002 - GASOLINA C ADITIVADA;
+320102001 - GASOLINA C COMUM;
+320102003 - GASOLINA C PREMIUM;
+820101033 - ÓLEO DIESEL B S10 - ADITIVADO;
+820101034 - ÓLEO DIESEL B S10 - COMUM;
+420106001 - ÓLEO DIESEL B S10 AMD 10;
+820101011 - ÓLEO DIESEL B S1800 Não Rodoviário - Aditivado;
+820101003 - ÓLEO DIESEL B S1800 Não Rodoviário - Comum;
+820101013 - ÓLEO DIESEL B S500 - ADITIVADO;
+820101012 - ÓLEO DIESEL B S500 - COMUM;
+420106002 - ÓLEO DIESEL B S500 AMD 10;
+420301004 - OLEO DIESEL DE REFERÊNCIA S300.
+ 
+
+Se o produto usa esse ANP é obrigatorio que seja informado encerrante no XML na TAG <encerrante>, e isso é preenchido automaticamente quando o produto usa o CFOP 5656
+ 
+Dessa forma, com essa rejeição é possivel que o produto tenha codigo de ANP preenchido, mas o CFOP esteja diferente de 5656 que causa a contingencia</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+1 - Solicitar ao cliente troca no cadastro do produto o código de CFOP para o CFOP de combustivel que é 5656
+2  Caso não resolva, sugerir revisão do ANP, e colocar um ANP para o produto que não esteja na tabela acima
+ 
+No PDV basta consolidar e tentar transmiti
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem--> 
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 40 - Erro ocorre quando cliente tenta registrar para venda um produto que provavelmente esta com o preço zerado ou simplismente o produto esta inativo </h4>
+    <span class="descricao-sql"> </span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção:
+    
+Verificar no retaguarda as circustâncias que se encontram esse produto, se realmente esta com preço zerado no retaguarda e se esta ativo, se ja foi aprovado preço no PDV etc.
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
         </div>
 
         </div>
