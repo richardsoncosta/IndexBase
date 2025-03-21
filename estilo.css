@@ -100,7 +100,13 @@ h3 {
     padding: 10px;
    }
 
-   .descricao-sql {
+   .descricao-conhecimento {
+    font-size: 0.8em;
+    padding: 2px;
+    color: grey;
+
+   }
+    .descricao-sql {
     font-size: 0.8em;
     padding: 2px;
     color: grey;
