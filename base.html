@@ -1,117 +1,18 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="pt-BR">
 <head>
-    <title>Base de conhecimentos</title>
-    <meta charset="utf-8">
-    <link rel="stylesheet" type="text/css" href="estilo.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base de Conhecimentos</title>
     <style>
-        .postagem {
-            position: relative;
-            width: 100%;
-            margin-bottom: 20px;
+        .postagem-fretedeloja, .codigo {
+            display: none; /* Inicialmente oculta o conteúdo */
         }
-
-        #toggleButton {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            text-align: center;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        #toggleButton:hover {
-            background-color: #0056b3;
-        }
-
-        .postagem.fretedeloja {
-            width: 100%;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            box-sizing: border-box;
-            margin-top: 10px;
+        .postagem-fretedeloja.visible, .codigo.visible {
+            display: block; /* Exibe o conteúdo quando a classe 'visible' é adicionada */
         }
     </style>
-    <script>
-        function checkAuth() {
-            const user = localStorage.getItem('user');
-            const timestamp = localStorage.getItem('timestamp');
-
-            if (user && timestamp && (Date.now() - timestamp < 4 * 60 * 60 * 1000)) {
-                return true;
-            }
-
-            while (true) {
-                const username = prompt("Digite o nome de usuário:");
-                if (username === null) {
-                    alert("Autenticação cancelada.");
-                    return false;
-                }
-
-                const password = prompt("Digite a senha:");
-                if (password === null) {
-                    alert("Autenticação cancelada.");
-                    return false;
-                }
-
-                if (username === "SUPERVISOR" && password === "123456") {
-                    localStorage.setItem('user', username);
-                    localStorage.setItem('timestamp', Date.now());
-                    return true;
-                } else {
-                    alert("Usuário ou senha incorretos. Tente novamente.");
-                }
-            }
-        }
-
-        if (!checkAuth()) {
-            window.location.href = "about:blank";
-        }
-
-        function toggleCode(button) {
-            const codeElement = document.getElementById('fretedeloja');
-            if (codeElement.style.height === "0px" || codeElement.style.height === "") {
-                codeElement.style.height = codeElement.scrollHeight + "px";
-                button.textContent = "OCULTAR FRENTE DE LOJA";
-            } else {
-                codeElement.style.height = "0px";
-                button.textContent = "SUPORTE FRENTE DE LOJA";
-            }
-        }
-                                         function toggleCode(button) {
-                                                    const codeElement = document.getElementById('codigo');
-                                                    if (codeElement.style.height === "0px" || codeElement.style.height === "") {
-                                                        codeElement.style.height = codeElement.scrollHeight + "px";
-                                                        button.textContent = "Mostrar mais";
-                                                    } else {
-                                                        codeElement.style.height = "0px";
-                                                        button.textContent = "Mostrar menos";
-                                                    }
-                                                }
-        function buscarConteudo() {
-            const termo = document.getElementById("inputBusca").value.toLowerCase();
-            const postagens = document.querySelectorAll(".postagem");
-
-            postagens.forEach(postagem => {
-                const titulo = postagem.querySelector("h4").textContent.toLowerCase();
-                const descricao = postagem.querySelector(".descricao-sql").textContent.toLowerCase();
-                const codigo = postagem.querySelector(".codigo").textContent.toLowerCase();
-
-                if (titulo.includes(termo) || descricao.includes(termo) || codigo.includes(termo)) {
-                    postagem.style.display = "";
-                } else {
-                    postagem.style.display = "none";
-                }
-            });
-        }
-    </script>
 </head>
-
 <body>
     <div id="area-cabecalho">
         <div id="area-logo">
@@ -131,42 +32,53 @@
             <div>
                 <h2>Base de conhecimentos</h2>
                 <br>
-                <span class="descricao">Encontre erro mapeados e suas soluçõs rapidas</span>
-                <br>
-                <br>
-                <br>
-                <p>Nesta seção você vai encontrar um acervo de erros documentados e suas soluções de uso rotineiro do suporte para as mais diversas situações</p>
+                <span class="descricao">Encontre erros mapeados e suas soluções rápidas</span>
+                <br><br><br>
+                <p>Nesta seção você vai encontrar um acervo de erros documentados e suas soluções de uso rotineiro do suporte para as mais diversas situações.</p>
                 <br>
                 <div>
                     <input type="text" id="inputBusca" placeholder="Buscar conteúdo..." oninput="buscarConteudo()">
                     <p class="buscar-conteudo">Use a barra acima para buscar conteúdo.</p>
                 </div>
-                <br>
-                <br>
-                <br>
+                <br><br><br>
 
                 <!-- Início das postagens -->
                 <div class="postagem">
-                    <button id="toggleButton" onclick="toggleCode(this)">SUPORTE FRENTE DE LOJA</button>
-                    <div class="postagem.fretedeloja" id="fretedeloja" style="overflow: hidden; transition: height 0.5s; height: 0px;">
-                        <h4>1 - Contingencia: Schema XML: The 'http://www.portalfiscal.inf.br/nfe.cAut element is invalid - The value " is invalid according to its datatype 'String - The Pattern constraint</h4>
+                    <div class="postagem-fretedeloja"> <!-- Conteúdo da div que será mostrado pelo primeiro botão -->
+                        <h4>1 - Contingência: Schema XML: The 'http://www.portalfiscal.inf.br/nfe.cAut' element is invalid - The value "" is invalid according to its datatype 'String' - The Pattern constraint</h4>
                         <br>
-                        <span class="descricao-sql">Erro no XML, existe algum caractere que não é aceito pela sefaz no campo de autorização manual, que o frentista informa para finalizar uma venda em cartão manual</span>
-                        <br>
-                        <br>
-                        <pre class="codigo" style="display: none;">
-                            <br>
-                            Para correção: 
-                            1 - No banco do PAF>tabela VENDA_FECHAMENTO_CRT>coluna CARTAO_AUTORIZAÇAO> Alterar o valor nesse campo por qualquer numero natural>comitar e (Caso nao seja necessário para o cliente essa funçao, de digitar o numero de autorização para baixar a venda, podemos desativar a função e evitar futuros casos 
-                            2 - Para desativar a função caso o cliente não use (Perguntar se usa) > Acessar > "configurações PDV"> aba TEF> desmarcar flag canto inferior esquerdo > solicitação digitação manual para cartão
-                            <br>
-                        </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+                        <span class="descricao-sql">Erro no XML, existe algum caractere que não é aceito pela SEFAZ no campo de autorização manual, que o frentista informa para finalizar uma venda em cartão manual.</span>
+                        <br><br>
                     </div>
+
+                    <pre class="codigo"> <!-- Conteúdo pré-formatado que será mostrado pelo segundo botão -->
+                        Para correção:
+                        1 - No banco do PAF > tabela VENDA_FECHAMENTO_CRT > coluna CARTAO_AUTORIZACAO > Alterar o valor nesse campo por qualquer número natural > comitar.
+                        (Caso não seja necessário para o cliente essa função de digitar o número de autorização para baixar a venda, podemos desativar a função e evitar futuros casos.)
+
+                        2 - Para desativar a função caso o cliente não use (Perguntar se usa) > Acessar > "Configurações PDV" > aba TEF > desmarcar flag canto inferior esquerdo > solicitação digitação manual para cartão.
+                    </pre>
+
+                    <button onclick="toggleCode('postagem-fretedeloja', this)">SUPORTE FRENTE DE LOJA</button>
+                    <button onclick="toggleCode('codigo', this)">Mostrar mais</button>
+                    <br><br>
+                    <hr>
                 </div>
-                <br>
             </div>
         </div>
     </div>
-</body>
 
+    <script>
+        function toggleCode(elementClass, button) {
+            const element = document.querySelector(`.${elementClass}`); // Seleciona o elemento pela classe
+            if (element.classList.contains('visible')) {
+                element.classList.remove('visible'); // Oculta o conteúdo
+                button.textContent = elementClass === 'postagem-fretedeloja' ? 'SUPORTE FRENTE DE LOJA' : 'Mostrar mais';
+            } else {
+                element.classList.add('visible'); // Exibe o conteúdo
+                button.textContent = elementClass === 'postagem-fretedeloja' ? 'OCULTAR FRENTE DE LOJA' : 'Mostrar menos';
+            }
+        }
+    </script>
+</body>
 </html>
