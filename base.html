@@ -83,7 +83,16 @@
                 button.textContent = "SUPORTE FRENTE DE LOJA";
             }
         }
-
+                                         function toggleCode(button) {
+                                                    const codeElement = document.getElementById('codigo');
+                                                    if (codeElement.style.height === "0px" || codeElement.style.height === "") {
+                                                        codeElement.style.height = codeElement.scrollHeight + "px";
+                                                        button.textContent = "OCULTAR FRENTE DE LOJA";
+                                                    } else {
+                                                        codeElement.style.height = "0px";
+                                                        button.textContent = "SUPORTE FRENTE DE LOJA";
+                                                    }
+                                                }
         function buscarConteudo() {
             const termo = document.getElementById("inputBusca").value.toLowerCase();
             const postagens = document.querySelectorAll(".postagem");
