@@ -6,12 +6,10 @@
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="estilo.css">
     <style>
-        .postagem.fretedeloja {
+        .postagem {
+            position: relative;
             width: 100%;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            box-sizing: border-box;
+            margin-bottom: 20px;
         }
 
         #toggleButton {
@@ -23,11 +21,20 @@
             cursor: pointer;
             text-align: center;
             font-size: 16px;
-            margin-top: 10px;
+            margin-bottom: 10px;
         }
 
         #toggleButton:hover {
             background-color: #0056b3;
+        }
+
+        .postagem.fretedeloja {
+            width: 100%;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            margin-top: 10px;
         }
     </style>
     <script>
@@ -131,6 +138,7 @@
 
                 <!-- Início das postagens -->
                 <div class="postagem">
+                    <button id="toggleButton" onclick="toggleCode(this)">SUPORTE FRENTE DE LOJA</button>
                     <div class="postagem.fretedeloja" id="fretedeloja" style="overflow: hidden; transition: height 0.5s; height: 0px;">
                         <h4>1 - Contingencia: Schema XML: The 'http://www.portalfiscal.inf.br/nfe.cAut element is invalid - The value " is invalid according to its datatype 'String - The Pattern constraint</h4>
                         <br>
@@ -145,7 +153,6 @@
                             <br>
                         </pre>
                     </div>
-                    <button id="toggleButton" onclick="toggleCode(this)">SUPORTE FRENTE DE LOJA</button>
                 </div>
                 <br>
             </div>
