@@ -36,6 +36,20 @@
             box-sizing: border-box;
             margin-top: 10px;
         }
+
+        .codigo {
+            display: none; /* Inicialmente oculto */
+            overflow: hidden;
+            transition: height 0.5s;
+        }
+
+        .codigo.visible {
+            display: block; /* Exibir quando o botão "Mostrar solução" for clicado */
+        }
+
+        .hidden {
+            display: none; /* Classe para ocultar elementos */
+        }
     </style>
     <script>
         function checkAuth() {
@@ -73,14 +87,34 @@
             window.location.href = "about:blank";
         }
 
+        // Função para o botão "SUPORTE FRENTE DE LOJA"
         function toggleCode(button) {
-            const codeElement = document.getElementById('fretedeloja');
-            if (codeElement.style.height === "0px" || codeElement.style.height === "") {
-                codeElement.style.height = codeElement.scrollHeight + "px";
+            const contentElement = document.getElementById('fretedeloja-content');
+            const codeElement = document.querySelector('.codigo');
+
+            if (contentElement.classList.contains('hidden')) {
+                contentElement.classList.remove('hidden');
                 button.textContent = "OCULTAR SUPORTE FRENTE DE LOJA";
             } else {
-                codeElement.style.height = "0px";
+                contentElement.classList.add('hidden');
                 button.textContent = "SUPORTE FRENTE DE LOJA";
+                // Garantir que o código também seja ocultado
+                codeElement.style.display = "none";
+                document.getElementById('showSolutionButton').textContent = "Mostrar solução";
+            }
+        }
+
+        // Função para o botão "Mostrar solução"
+        function toggleSolution() {
+            const codeElement = document.querySelector('.codigo');
+            const button = document.getElementById('showSolutionButton');
+
+            if (codeElement.style.display === "none" || codeElement.style.display === "") {
+                codeElement.style.display = "block";
+                button.textContent = "Ocultar solução";
+            } else {
+                codeElement.style.display = "none";
+                button.textContent = "Mostrar solução";
             }
         }
 
@@ -139,21 +173,24 @@
                 <!-- Início das postagens -->
                 <div class="postagem">
                     <button id="toggleButton" onclick="toggleCode(this)">SUPORTE FRENTE DE LOJA</button>
-                    <div class="postagem.fretedeloja" id="fretedeloja" style="overflow: hidden; transition: height 0.5s; height: 0px;">
-                        <h4>1 - Contingencia: Schema XML: The 'http://www.portalfiscal.inf.br/nfe.cAut element is invalid - The value " is invalid according to its datatype 'String - The Pattern constraint</h4>
-                        <br>
-                        <span class="descricao-conhecimento">Erro no XML, existe algum caractere que não é aceito pela sefaz no campo de autorização manual, que o frentista informa para finalizar uma venda em cartão manual</span>
-                        <br>
-                        <br>
-                        <pre class="codigo">
+                    <div class="postagem fretedeloja" id="fretedeloja">
+                        <div id="fretedeloja-content" class="hidden">
+                            <h4>1 - Contingencia: Schema XML: The 'http://www.portalfiscal.inf.br/nfe.cAut element is invalid - The value " is invalid according to its datatype 'String - The Pattern constraint</h4>
                             <br>
+                            <span class="descricao-conhecimento">Erro no XML, existe algum caractere que não é aceito pela sefaz no campo de autorização manual, que o frentista informa para finalizar uma venda em cartão manual</span>
+                            <br>
+                            <br>
+                            <button id="showSolutionButton" onclick="toggleSolution()">Mostrar solução</button>
+                            <pre class="codigo">
+                                <br>
 Para correção: 
-                            
+                                
 1 - No banco do PAF>tabela VENDA_FECHAMENTO_CRT>coluna CARTAO_AUTORIZAÇAO> Alterar o valor nesse campo por qualquer numero natural>comitar e (Caso nao seja necessário para o cliente essa funçao, de digitar o numero de autorização para baixar a venda, podemos desativar a função e evitar futuros casos 
 
 2 - Para desativar a função caso o cliente não use (Perguntar se usa) > Acessar > "configurações PDV"> aba TEF> desmarcar flag canto inferior esquerdo > solicitação digitação manual para cartão
-                            <br>
-                        </pre>
+                                <br>
+                            </pre>
+                        </div>
                     </div>
                 </div>
                 <br>
