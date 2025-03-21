@@ -77,7 +77,7 @@
             const codeElement = document.getElementById('fretedeloja');
             if (codeElement.style.height === "0px" || codeElement.style.height === "") {
                 codeElement.style.height = codeElement.scrollHeight + "px";
-                button.textContent = "OCULTAR FRENTE DE LOJA";
+                button.textContent = "OCULTAR SUPORTE FRENTE DE LOJA";
             } else {
                 codeElement.style.height = "0px";
                 button.textContent = "SUPORTE FRENTE DE LOJA";
@@ -90,7 +90,7 @@
 
             postagens.forEach(postagem => {
                 const titulo = postagem.querySelector("h4").textContent.toLowerCase();
-                const descricao = postagem.querySelector(".descricao-sql").textContent.toLowerCase();
+                const descricao = postagem.querySelector(".descricao-conhecimento").textContent.toLowerCase();
                 const codigo = postagem.querySelector(".codigo").textContent.toLowerCase();
 
                 if (titulo.includes(termo) || descricao.includes(termo) || codigo.includes(termo)) {
@@ -150,6 +150,7 @@
 Para correção: 
                             
 1 - No banco do PAF>tabela VENDA_FECHAMENTO_CRT>coluna CARTAO_AUTORIZAÇAO> Alterar o valor nesse campo por qualquer numero natural>comitar e (Caso nao seja necessário para o cliente essa funçao, de digitar o numero de autorização para baixar a venda, podemos desativar a função e evitar futuros casos 
+
 2 - Para desativar a função caso o cliente não use (Perguntar se usa) > Acessar > "configurações PDV"> aba TEF> desmarcar flag canto inferior esquerdo > solicitação digitação manual para cartão
                             <br>
                         </pre>
