@@ -1,17 +1,83 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Base de Conhecimentos</title>
-    <style>
-        .postagem-fretedeloja, .codigo {
-            display: none; /* Inicialmente oculta o conteúdo */
+    <title>Base de conhecimentos</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="estilo.css">
+    <script>
+        function checkAuth() {
+            const user = localStorage.getItem('user');
+            const timestamp = localStorage.getItem('timestamp');
+
+            // Verifica se o usuário já está autenticado e se a autenticação ainda é válida (4 horas)
+            if (user && timestamp && (Date.now() - timestamp < 4 * 60 * 60 * 1000)) {
+                return true; // Usuário já autenticado
+            }
+
+            // Loop para solicitar credenciais até que o usuário acerte ou cancele
+            while (true) {
+                const username = prompt("Digite o nome de usuário:");
+                if (username === null) {
+                    // Usuário cancelou o prompt
+                    alert("Autenticação cancelada.");
+                    return false;
+                }
+
+                const password = prompt("Digite a senha:");
+                if (password === null) {
+                    // Usuário cancelou o prompt
+                    alert("Autenticação cancelada.");
+                    return false;
+                }
+
+                // Verifica se as credenciais estão corretas
+                if (username === "SUPERVISOR" && password === "123456") {
+                    localStorage.setItem('user', username); // Armazena o usuário
+                    localStorage.setItem('timestamp', Date.now()); // Armazena o timestamp
+                    return true; // Autenticação bem-sucedida
+                } else {
+                    alert("Usuário ou senha incorretos. Tente novamente.");
+                }
+            }
         }
-        .postagem-fretedeloja.visible, .codigo.visible {
-            display: block; /* Exibe o conteúdo quando a classe 'visible' é adicionada */
+
+        // Verifica a autenticação ao carregar a página
+        if (!checkAuth()) {
+            window.location.href = "about:blank"; // Redireciona para uma página em branco se a autenticação falhar
         }
-    </style>
+
+        // Função para mostrar/ocultar o código
+        function toggleCode(button) {
+            const codeElement = button.previousElementSibling;
+            if (codeElement.style.display === "none" || codeElement.style.display === "") {
+                codeElement.style.display = "block";
+                button.textContent = "Mostrar menos";
+            } else {
+                codeElement.style.display = "none";
+                button.textContent = "Mostrar mais";
+            }
+        }
+
+        // Função para buscar conteúdo
+        function buscarConteudo() {
+            const termo = document.getElementById("inputBusca").value.toLowerCase(); // Obtém o termo de busca
+            const postagens = document.querySelectorAll(".postagem"); // Seleciona todas as postagens
+
+            postagens.forEach(postagem => {
+                const titulo = postagem.querySelector("h4").textContent.toLowerCase();
+                const descricao = postagem.querySelector(".descricao-sql").textContent.toLowerCase();
+                const codigo = postagem.querySelector(".codigo").textContent.toLowerCase();
+
+                // Verifica se o termo de busca está no título, descrição ou código
+                if (titulo.includes(termo) || descricao.includes(termo) || codigo.includes(termo)) {
+                    postagem.style.display = ""; // Mostra a postagem se contiver o termo
+                } else {
+                    postagem.style.display = "none"; // Oculta a postagem se não contiver o termo
+                }
+            });
+        }
+    </script>
 </head>
 <body>
     <div id="area-cabecalho">
