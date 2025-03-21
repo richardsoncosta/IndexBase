@@ -2371,14 +2371,19 @@ Recomendavel transferencia do caso para o retaguarda para devida configuração 
     </div> <!-- fechamento postagem-->
      <div class="postagem"> <!-- abertura postagem-->
     <h4> 95 - Campo SITEF_TLS nao existente na tabela PAF_BANCO do servidor</h4>
-    <span class="descricao-sql"> Erro ao enviar consolidação, o PDV informa que o banco do paf existe uma tabela que na retaguarda não existe, ao verificar com o DEV segundo eles não há problema, mas a suspeita é que a retaguarda do cliente não esta atualizada e portanto não existe a tabela</span>
+    <span class="descricao-sql"> Erro ao enviar consolidação, o PDV informa que o banco do paf existe uma tabela que na retaguarda não existe, ao verificar com o DEV segundo eles a retaguarda do cliente não esta atualizada e portanto não existe a tabela</span>
     <br>
     <br>   
 
 <pre class="codigo"style="display: none;">
 Para correção: 
     
-O paliativo para esse caso é excluir da tabela PAF_BANCO a coluna SITEF_TLS, após a mudança a consolidação ocorre sem erros
+O paliativo para esse caso é na coluna consolidoup da tabela PAF_BANCO a alterar de 'false' para 'true'
+
+Ou executar:
+    
+update paf_banco
+set consolidoup='false'
 <br>
     <br>
 </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
