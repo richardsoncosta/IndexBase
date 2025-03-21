@@ -2369,7 +2369,44 @@ Recomendavel transferencia do caso para o retaguarda para devida configuração 
 <br>
 <hr>
     </div> <!-- fechamento postagem-->
+     <div class="postagem"> <!-- abertura postagem-->
+    <h4> 95 - Campo SITEF_TLS nao existente na tabela PAF_BANCO do servidor</h4>
+    <span class="descricao-sql"> Erro ao enviar consolidação, o PDV informa que o banco do paf existe uma tabela que na retaguarda não existe, ao verificar com o DEV segundo eles não há problema, mas a suspeita é que a retaguarda do cliente não esta atualizada e portanto não existe a tabela</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
     
+O paliativo para esse caso é excluir da tabela PAF_BANCO a coluna SITEF_TLS, após a mudança a consolidação ocorre sem erros
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+    </div> <!-- fechamento postagem-->
+     <div class="postagem"> <!-- abertura postagem-->
+    <h4> 96 - Campo Read timed out.
+Impossível recuperar um tipo 'STRING' a partir de um campo do tipo 'TLISTA'.</h4>
+    <span class="descricao-sql"> Erro ao enviar consolidação, quando o PDV possui muitos registros não consolidados ao tentar consolidar o PDV ao exceder o tempo limite da consolidação apresenta esse erro</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+    
+Basta continuar enviando a consolidação ate que o volume de registros seja menor e não seja mais necessario o servidor derrubar automaticamente a consolidação
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
         </div>
 
         </div>
