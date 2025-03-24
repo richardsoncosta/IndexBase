@@ -2392,7 +2392,7 @@ set consolidoup='false'
 <br>
 <hr>
     </div> <!-- fechamento postagem-->
-    </div> <!-- fechamento postagem-->
+    
      <div class="postagem"> <!-- abertura postagem-->
     <h4> 96 - Campo Read timed out.
 Impossível recuperar um tipo 'STRING' a partir de um campo do tipo 'TLISTA'.</h4>
@@ -2404,6 +2404,31 @@ Impossível recuperar um tipo 'STRING' a partir de um campo do tipo 'TLISTA'.</h
 Para correção: 
     
 Basta continuar enviando a consolidação ate que o volume de registros seja menor e não seja mais necessario o servidor derrubar automaticamente a consolidação
+<br>
+    <br>
+</pre> <button onclick="toggleCode(this)">Mostrar mais</button>
+
+<br>
+<br>
+<hr>
+    </div> <!-- fechamento postagem-->
+
+    <div class="postagem"> <!-- abertura postagem-->
+    <h4> 97 - Não foi possível estabelecer relação de confiança para o canal seguro de SSL/TLS.
+24/03/2025 15:20:49.622 NFE Erro: Versao: 4.00
+        
+Regras de Negócio [Ambiente de Produção] 2 erros de validação
+410 - [Simulacao] Rejeicao: UF informada no campo cUF nao e atendida pelo Web Service
+781 - [Simulacao] Rejeicao: Emissor nao habilitado para emissao da NF-e/NFC-e
+</h4>
+    <span class="descricao-sql"> Contingência no pdv de um cliente em MG, neste caso o erro esta relacionado a falta de uma cadeia de certificado obrigatoria na UF</span>
+    <br>
+    <br>   
+
+<pre class="codigo"style="display: none;">
+Para correção: 
+    
+Basta baixar a cadeia de certificado existente no drive redesoft Suporte>Artefatos>Base de conhecimento> Certificado MG ou pelo link https://drive.b2click.com/s/5gew8KG2wQTiZne
 <br>
     <br>
 </pre> <button onclick="toggleCode(this)">Mostrar mais</button>
